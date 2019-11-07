@@ -3,8 +3,8 @@ CREATE TABLE groupMember(
     userID integer,
     role varchar(20),
     PRIMARY KEY (gID, userID),
-    FOREIGN KEY (gID) REFERENCES group(gID),
-    FOREIGN KEY (userID) REFERENCES profile(userID)
+    CONSTRAINT groupMember_fk1 FOREIGN KEY (gID) REFERENCES "group"(gID),
+    CONSTRAINT groupMember_fk2 FOREIGN KEY (userID) REFERENCES profile(userID)
 );
 
 CREATE TABLE pendingGroupMember(
@@ -12,8 +12,8 @@ CREATE TABLE pendingGroupMember(
     userID integer,
     message varchar(200),
     PRIMARY KEY (gID, userID),
-    FOREIGN KEY (gID) REFERENCES group(gID),
-    FOREIGN KEY (userID) REFERENCES profile(userID)
+    CONSTRAINT pendingGroupMember_fk1 FOREIGN KEY (gID) REFERENCES "group"(gID),
+    CONSTRAINT pendingGroupMember_fk2 FOREIGN KEY (userID) REFERENCES profile(userID)
 );
 
 create table profile
@@ -65,10 +65,10 @@ CREATE TABLE messageRecipient(
     CONSTRAINT messages_fk foreign key (userID) references profile(userID)
 );
 
-CREATE TABLE group(
+CREATE TABLE "group"(
     gID integer,
     name varchar(50),
-    limit integer,
+    "limit" integer,
     description varchar(200),
-    CONSTRAINT group_pk primary key (gID),
+    CONSTRAINT group_pk primary key (gID)
 );
