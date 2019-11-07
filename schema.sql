@@ -28,14 +28,18 @@ create table friend(
     userID2  int,
     JDate    date,
     message  varchar(200),
-    Constraint friend_PK primary key (userID1, userID2)
+    Constraint friend_PK primary key (userID1, userID2),
+    CONSTRAINT friend_FK foreign key (userID1) references profile(userID),
+    constraint friend_FK_2 foreign key (userID2) references profile(userID)
 );
 
 create table pendingFiend(
     fromID    int,
     toID      int,
     message varchar(200),
-    CONSTRAINT pendingFiend_PK primary key (fromID, toID)
+    CONSTRAINT pendingFiend_PK primary key (fromID, toID),
+    CONSTRAINT pendingFriend_FK foreign key (fromID) references profile(userID),
+    constraint pendingFriend_FK_2 foreign key (toID) references profile(userID)
 );
 
 CREATE TABLE messages(
