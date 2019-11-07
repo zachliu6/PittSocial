@@ -33,3 +33,14 @@ CREATE TRIGGER trig_send_message_to_group
     FOR EACH ROW
     when ( new.touserid is null and new.togroupid is not null )
     EXECUTE PROCEDURE send_msg_to_groupmembers()
+
+CREATE OR REPLACE FUNCTION sendMessage() RETURNS TRIGGER AS $$
+    BEGIN
+        insert into messageRecipient(msgID, userID)
+         values (new.msgID, new.toUserID);
+    END;
+    $$ language plpgsql;
+
+CREATE TRIGGER addMessageRecipient AFTER INSERT ON messages
+    FOR EACH ROW
+    EXECUTE PROCEDURE sendMessage();
