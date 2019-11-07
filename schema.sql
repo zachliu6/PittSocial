@@ -1,20 +1,3 @@
-CREATE TABLE groupMember(
-    gID integer,
-    userID integer,
-    role varchar(20),
-    PRIMARY KEY (gID, userID),
-    CONSTRAINT groupMember_fk1 FOREIGN KEY (gID) REFERENCES "group"(gID),
-    CONSTRAINT groupMember_fk2 FOREIGN KEY (userID) REFERENCES profile(userID)
-);
-
-CREATE TABLE pendingGroupMember(
-    gID integer,
-    userID integer,
-    message varchar(200),
-    PRIMARY KEY (gID, userID),
-    CONSTRAINT pendingGroupMember_fk1 FOREIGN KEY (gID) REFERENCES "group"(gID),
-    CONSTRAINT pendingGroupMember_fk2 FOREIGN KEY (userID) REFERENCES profile(userID)
-);
 
 create table profile
 (
@@ -54,15 +37,16 @@ CREATE TABLE messages(
     toGroupID integer,
     timeSent timestamp,
     CONSTRAINT messages_pk primary key (msgID),
-    CONSTRAINT messages_fk foreign key (fromID, toUserID) references profile(userID)
+    CONSTRAINT messages_fk foreign key (fromID) references profile (userID),
+    constraint messages_fk_2 foreign key (toUserID) references profile (userID)
 );
 
 CREATE TABLE messageRecipient(
     msgID integer,
     userID integer,
     CONSTRAINT messageRecipient_pk primary key (msgID, userID),
-    CONSTRAINT messages_fk foreign key (msgID) references messages(msgID),
-    CONSTRAINT messages_fk foreign key (userID) references profile(userID)
+    CONSTRAINT messagesRecipient_fk foreign key (msgID) references messages(msgID),
+    CONSTRAINT messagesRecipient_fk_2 foreign key (userID) references profile(userID)
 );
 
 CREATE TABLE "group"(
@@ -71,4 +55,22 @@ CREATE TABLE "group"(
     "limit" integer,
     description varchar(200),
     CONSTRAINT group_pk primary key (gID)
+);
+
+CREATE TABLE groupMember(
+    gID integer,
+    userID integer,
+    role varchar(20),
+    PRIMARY KEY (gID, userID),
+    CONSTRAINT groupMember_fk1 FOREIGN KEY (gID) REFERENCES "group"(gID),
+    CONSTRAINT groupMember_fk2 FOREIGN KEY (userID) REFERENCES profile(userID)
+);
+
+CREATE TABLE pendingGroupMember(
+    gID integer,
+    userID integer,
+    message varchar(200),
+    PRIMARY KEY (gID, userID),
+    CONSTRAINT pendingGroupMember_fk1 FOREIGN KEY (gID) REFERENCES "group"(gID),
+    CONSTRAINT pendingGroupMember_fk2 FOREIGN KEY (userID) REFERENCES profile(userID)
 );
