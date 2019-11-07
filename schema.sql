@@ -5,9 +5,9 @@ CREATE TABLE groupMember(
     CONSTRAINT groupMember_pk PRIMARY KEY (gID, userID)
 );
 
-CREATE TABLE pendingGroupMemeber(
+CREATE TABLE pendingGroupMember(
     gID integer,
     userID integer,
     message varchar(200),
-    CONSTRAINT pendingGroupMemeber_pk PRIMARY KEY (gID, userID)
+    CONSTRAINT pendingGroupMember_pk PRIMARY KEY (gID, userID)
 );
