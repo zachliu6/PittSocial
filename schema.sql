@@ -37,3 +37,30 @@ create table pendingFiend(
     message varchar(200),
     CONSTRAINT pendingFiend_PK primary key (fromID, toID)
 );
+
+CREATE TABLE messages(
+    msgID integer,
+    fromID integer,
+    message varchar(200),
+    toUserID integer,
+    toGroupID integer,
+    timeSent timestamp,
+    CONSTRAINT messages_pk primary key (msgID),
+    CONSTRAINT messages_fk foreign key (fromID, toUserID) references profile(userID)
+);
+
+CREATE TABLE messageRecipient(
+    msgID integer,
+    userID integer,
+    CONSTRAINT messageRecipient_pk primary key (msgID, userID),
+    CONSTRAINT messages_fk foreign key (msgID) references messages(msgID),
+    CONSTRAINT messages_fk foreign key (userID) references profile(userID)
+);
+
+CREATE TABLE group(
+    gID integer,
+    name varchar(50),
+    limit integer,
+    description varchar(200),
+    CONSTRAINT group_pk primary key (gID),
+);
