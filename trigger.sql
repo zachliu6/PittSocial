@@ -1,6 +1,8 @@
 CREATE OR REPLACE FUNCTION wipeUser() RETURNS TRIGGER AS $$
     BEGIN
         DELETE FROM groupMember g WHERE g.userid = old.userid;
+        DELETE FROM messagerecipient mr WHERE mr.userid = old.userid;
+        DELETE FROM messages m WHERE m.fromid IS NULL AND m.touserid IS NULL;
     END
     $$;
 
