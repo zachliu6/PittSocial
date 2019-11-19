@@ -38,8 +38,10 @@ CREATE TRIGGER trig_send_message_to_group
 
 CREATE OR REPLACE FUNCTION sendMessage() RETURNS TRIGGER AS $$
     BEGIN
-        insert into messageRecipient(msgID, userID)
+	IF new.toGroupID IS NULL THEN
+       	 insert into messageRecipient(msgID, userID)
          values (new.msgID, new.toUserID);
+	END IF;
     END;
     $$ language plpgsql;
 

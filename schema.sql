@@ -3,7 +3,7 @@ create table profile
 (
     userID  int,
     name    varchar(50),
-    email   varchar(50),
+    email   varchar(50) UNIQUE,
     password varchar(50),
     date_of_birth   date,
     lastlogin   timestamp,
