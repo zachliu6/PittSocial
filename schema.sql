@@ -30,13 +30,12 @@ create table pendingFiend(
 );
 
 CREATE TABLE messages(
-    msgID integer,
+    msgID SERIAL PRIMARY KEY,
     fromID integer,
     message varchar(200),
     toUserID integer,
     toGroupID integer,
     timeSent timestamp,
-    CONSTRAINT messages_pk primary key (msgID),
     CONSTRAINT messages_fk foreign key (fromID) references profile (userID),
     constraint messages_fk_2 foreign key (toUserID) references profile (userID)
 );

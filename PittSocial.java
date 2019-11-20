@@ -3,6 +3,8 @@ import java.sql.*;
 import java.util.Scanner;
 
 public class PittSocial{
+        public static int user_id; // global variable so there's no need to search for user's ID everytime
+
     public static void main(String args[]) throws
             SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
@@ -79,6 +81,10 @@ public class PittSocial{
     }
 
     private static void sendMessageToUser(){
+        System.out.println("Please enter the name of the user you are sending message to: ");
+        Scanner scanner = new Scanner(System. in);
+        String name = scanner. nextLine();
+        System.out.println("Please enter the message you want to send: ");
         
     }
 }
