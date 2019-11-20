@@ -52,7 +52,7 @@ CREATE TABLE messageRecipient(
 CREATE TABLE "group"(
     gID integer,
     name varchar(50),
-    "limit" integer,
+    size integer,
     description varchar(200),
     CONSTRAINT group_pk primary key (gID)
 );
