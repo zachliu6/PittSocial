@@ -62,7 +62,7 @@ public class PittSocial{
             System.out.println("7. Check received messages ");
             System.out.println("8. Check the newest received messages. ");
             System.out.println("9. List current freinds. ");
-            System.out.pritnln("10. Search for a friend. ");
+            System.out.printnln("10. Search for a friend. ");
             System.out.println("11. Search for three Degress. ");
             System.out.println("12. List the messages in the past months. ");
             System.out.println("13. Log out. ");
