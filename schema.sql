@@ -73,6 +73,3 @@ CREATE TABLE pendingGroupMember(
     CONSTRAINT pendingGroupMember_fk1 FOREIGN KEY (gID) REFERENCES groupinfo(gID),
     CONSTRAINT pendingGroupMember_fk2 FOREIGN KEY (userID) REFERENCES profile(userID)
 );
-
-select message from messages
-where timeSent > date or timeSent = date;

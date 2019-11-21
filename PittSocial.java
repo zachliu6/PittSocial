@@ -192,15 +192,17 @@ public class PittSocial{
         props.setProperty("user", "postgres");
         props.setProperty("password", "password");
         Connection conn = DriverManager.getConnection(url, props);
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        PreparedStatement st = conn.prepareStatement();
+        String query = "INSERT INTO message values (DEFALUT, " + user_id +", ?,?,NULL," + formatter.format(date)+ ")";
         System.out.println("Please enter the iD of the user you are sending message to: ");
         Scanner scanner = new Scanner(System. in);
         String id = scanner. nextLine();
+        st.setString(1, input);
         System.out.println("Please enter the message you want to send: ");
         String msg = scanner. nextLine();
-        Statement st = conn.createStatement();
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        String query = "INSERT INTO message values (DEFALUT," + user_id +","+ msg + ","+id +",NULL," + formatter.format(date)+ ")";
+        st.setString(2, input);
         try{
             ResultSet res = st.executeQuery(query);
         }catch (SQLException e1) {
@@ -259,19 +261,28 @@ public class PittSocial{
         props.setProperty("user", "postgres");
         props.setProperty("password", "password");
         Connection conn = DriverManager.getConnection(url, props);
-        Statement st = conn.createStatement();
+        Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
         String query = "SELECT * FROM messages where touserid = " + user_id;
-        ResultSet res = st.executeQuery(query);
-        String sender, msg;
-        while (res.next()) {
-            res.getString();
-            sender = res.getString();
-            msg = res.getString();
-            System.out.println( "From user " + sender + ", cotent: " + msg);
-            res.getString();
-            res.getString();
-            res.getString();
-        }
+        try{
+            ResultSet res = st.executeQuery(query);
+            String sender, msg;
+            while (res.next()) {
+                sender = res.getInt(2);
+                msg = res.getString(3);
+                System.out.println( "From user " + sender + ", cotent: " + msg);
+            }
+       }catch (SQLException e1) {
+            System.out.println("SQL Error");
+            while (e1 != null) {
+                System.out.println("Message = " + e1.getMessage());
+                System.out.println("SQLState = "+ e1.getSQLState());
+                System.out.println("SQL Code = "+ e1.getErrorCode());
+                e1 = e1.getNextException();
+            }
+            conn.close();
+            scanner.close();
+            return;
+        } 
     }
 
     private static void displayNewMessages(connection conn)throws
@@ -288,7 +299,28 @@ public class PittSocial{
         Date date;
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         date = formatter.format(res);
-        query = "SELECT * from messages where timeSent >" + date + " or timeSent = " + date;
+        Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+        query = "SELECT * from messages where timeSent >" + date + " or timeSent = " + date + " AND touserid =" + user_id;
+        try{
+            ResultSet res = st.executeQuery(query);
+            String sender, msg;
+            while (res.next()) {
+                sender = res.getInt(2);
+                msg = res.getString(3);
+                System.out.println( "From user " + sender + ", cotent: " + msg);
+            }
+       }catch (SQLException e1) {
+            System.out.println("SQL Error");
+            while (e1 != null) {
+                System.out.println("Message = " + e1.getMessage());
+                System.out.println("SQLState = "+ e1.getSQLState());
+                System.out.println("SQL Code = "+ e1.getErrorCode());
+                e1 = e1.getNextException();
+            }
+            conn.close();
+            scanner.close();
+            return;
+        } 
     }
 
     private static void 
