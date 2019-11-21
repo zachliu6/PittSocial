@@ -1,6 +1,7 @@
 import java.util.Properties;
 import java.sql.*;
 import java.util.Scanner;
+import java.util.Date;
 
 public class PittSocial{
         public static int user_id; // global variable so there's no need to search for user's ID everytime
@@ -11,7 +12,7 @@ public class PittSocial{
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "19990406");
+        props.setProperty("password", "19990406")
         System.out.println("=========================WELCOME TO PITT SOCIAL=========================");
         System.out.println("Here's is the menu, please enter the number of the service you are looking for:");
         System.out.println("1. Login");
@@ -80,11 +81,62 @@ public class PittSocial{
 
     }
 
-    private static void sendMessageToUser(){
-        System.out.println("Please enter the name of the user you are sending message to: ");
+    private static void sendMessageToUser(Connection conn)throws
+            SQLException, ClassNotFoundException{
+        System.out.println("Please enter the iD of the user you are sending message to: ");
         Scanner scanner = new Scanner(System. in);
-        String name = scanner. nextLine();
+        String id = scanner. nextLine();
         System.out.println("Please enter the message you want to send: ");
-        
+        String msg = scanner. nextLine();
+        Statement st = conn.createStatement();
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        String query = "INSERT INTO message values (DEFALUT," + user_id +","+ msg + ","+id +",NULL," + formatter.format(date)+ ")";
+        ResultSet res = st.executeQuery(query);
     }
+
+    private static void sendMessageToGroup(connection conn)throws 
+            SQLException, ClassNotFoundException{
+        System.out.println("Please enter the ID of the group you are sending message to: ");
+        Scanner scanner = new Scanner(System. in);
+        String id = scanner. nextLine();
+        System.out.println("Please enter the message you want to send: ");
+        String msg = scanner. nextLine();
+        Statement st = conn.createStatement();
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        String query = "INSERT INTO message values (DEFALUT," + user_id +","+ msg + ",NULL," + id + formatter.format(date)+ ")";
+        ResultSet res = st.executeQuery(query);
+
+    }
+
+    private static void displayMessages(conenction conn)throws 
+            SQLException, ClassNotFoundException{
+        Statement st = conn.createStatement();
+        String query = "SELECT * FROM messages where touserid = " + user_id;
+        ResultSet res = st.executeQuery(query);
+        String sender, msg;
+        while (res.next()) {
+            res.getString();
+            sender = res.getString();
+            msg = res.getString();
+            System.out.println( "From user " + sender + ", cotent: " + msg);
+            res.getString();
+            res.getString();
+            res.getString();
+        }
+    }
+
+    private static void displayNewMessages(connection conn)throws
+            SQLException, ClassNotFoundException{
+        Statement st = conn.createStatement();
+        String query = "SELECT lastlogin FROM profile where userid = " + user_id;
+        ResultSet res = st.executeQuery(query);
+        Date date;
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        date = formatter.format(res);
+        query = "SELECT * from messages where timeSent >" + date + " or timeSent = " + date;
+    }
+
+    private static void 
 }
