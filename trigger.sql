@@ -34,7 +34,7 @@ CREATE TRIGGER trig_send_message_to_group
     AFTER insert ON messages
     FOR EACH ROW
     when ( new.touserid is null and new.togroupid is not null )
-    EXECUTE PROCEDURE send_msg_to_groupmembers()
+    EXECUTE PROCEDURE send_msg_to_groupmembers();
 
 CREATE OR REPLACE FUNCTION sendMessage() RETURNS TRIGGER AS $$
     BEGIN
