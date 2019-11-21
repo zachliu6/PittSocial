@@ -3,6 +3,7 @@ import java.sql.*;
 import java.util.Scanner;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class PittSocial{
         public static int user_id; // global variable so there's no need to search for user's ID everytime
@@ -96,6 +97,12 @@ public class PittSocial{
                     displayFriends();
                 }else if(input.equals("10")){
                     //searchForUser();
+                }else if(input.equals("11")){
+                    threeFriends();
+                }else if(input.equals("12")){
+                    topMessages();
+                }else if(input.equals("13")){
+                    logout();
                 }
             }
         }else{
@@ -414,10 +421,14 @@ public class PittSocial{
         } 
     }
 
-    private static void threeFriends(int targetID)
-    {
+    private static void threeFriends()
+    {   
+        int friend2;
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Please enter the number of the User ID");
+        int targetID = scan.nextInt();
         boolean found = false;
-        List<Integer> path = new ArrayList<Integer>();
+        ArrayList<Integer> path = new ArrayList<Integer>();
         path.add(user_id);
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
@@ -438,12 +449,12 @@ public class PittSocial{
             }
             if(!found)
             {
-                Statement stmt = conn.createStatement();
+                Statement stmt2 = conn.createStatement();
                 String query1 = "SELECT * from friend where userID1 = " + String.valueOf(friend) + ";";
-                ResultSet rs2 = stmt.executeQuery(query1);
+                ResultSet rs2 = stmt2.executeQuery(query1);
                 while(rs2.next() && !found)
                 {
-                    int friend2 = rs2.getInt(2);
+                    friend2 = rs2.getInt(2);
                     if(friend2 == targetID)
                     {
                         found = true;
@@ -453,9 +464,9 @@ public class PittSocial{
                 }
                 if(!found)
                 {
-                    Statement stmt = conn.createStatement();
+                    Statement stmt3 = conn.createStatement();
                     String query2 = "SELECT * from friend where userID1 = " + String.valueOf(friend2) + ";";
-                    ResultSet rs3 = stmt.executeQuery(query2);
+                    ResultSet rs3 = stmt3.executeQuery(query2);
                     while(rs3.next() && !found)
                     {
                         int friend3 = rs3.getInt(2);
@@ -484,9 +495,14 @@ public class PittSocial{
 
     }
 
-    private static void topMessages(k, x)
-    {
+    private static void topMessages()
+    {   
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Please enter the number of user: ");
+        int k = scan.nextInt();
         String numUsers = String.valueOf(k);
+        System.out.println("Please enter the number of message: ");
+        int x = scan.nextInt();
         String numMessages = String.valueOf(x);
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
@@ -553,7 +569,7 @@ public class PittSocial{
         Statement stmt = conn.createStatement();
         String query = "UPDATE profile set lastlogin = CURRENT_TIMESTAMP where userID = " + String.valueOf(user_id) + ";";
         stmt.executeQuery(query);
-        exit(0);
+        System.exit(0);
     }
 
 }
