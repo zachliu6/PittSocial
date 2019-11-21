@@ -382,4 +382,56 @@ public class PittSocial{
         } 
     }
 
+    private static void threeFriends(String userID)
+    {
+
+    }
+
+    private static void topMessages(k, x)
+    {
+        String numUsers = String.valueOf(k);
+        String numMessages = String.valueOf(x);
+        Class.forName("org.postgresql.Driver");
+        String url = "jdbc:postgresql://localhost/postgres";
+        Properties props = new Properties();
+        props.setProperty("user", "postgres");
+        props.setProperty("password", "password");
+        Connection conn = DriverManager.getConnection(url, props);
+        Statement stmt = conn.createStatement();
+        String query = "SELECT fromID, COUNT(fromID) from messageInfo where toUserID = " + String.valueOf(user_id) +
+                " group by fromID order by count(fromID) desc limit " + numUsers;
+        String query1 = "SELECT count(*) from messageInfo where timeSent > (timeSent::time - INTERVAL '" + numMessages + " month')::timestamp";
+        ResultSet rs1 = stmt.executeQuery(query);
+        ResultSet rs2 = stmt.executeQuery(query1);
+        System.out.println("Top users: ");
+        while(rs1.next())
+        {
+            Sting user = rs1.getString(1);
+            System.out.println(user);
+        }
+        int messages = rs2.getInt(1);
+        System.out.println("Number of messages in the past " + numMessages + "months: ");
+        System.out.println(messages);
+    }
+
+    private static void logout()
+    {
+        Class.forName("org.postgresql.Driver");
+        String url = "jdbc:postgresql://localhost/postgres";
+        Properties props = new Properties();
+        props.setProperty("user", "postgres");
+        props.setProperty("password", "password");
+        Connection conn = DriverManager.getConnection(url, props);
+        Statement stmt = conn.createStatement();
+        String query = "UPDATE profile set lastlogin = CURRENT_TIMESTAMP where userID = " + String.valueOf(user_id);
+        stmt.executeQuery(query);
+        home();
+    }
+
+    private static void exit()
+    {
+        logout();
+        exit(0);
+    }
+
 }
