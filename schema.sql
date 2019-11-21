@@ -20,11 +20,11 @@ create table friend(
     constraint friend_FK_2 foreign key (userID2) references profile(userID)
 );
 
-create table pendingFiend(
+create table pendingFriend(
     fromID    int,
     toID      int,
     message varchar(200),
-    CONSTRAINT pendingFiend_PK primary key (fromID, toID),
+    CONSTRAINT pendingFriend_PK primary key (fromID, toID),
     CONSTRAINT pendingFriend_FK foreign key (fromID) references profile(userID),
     constraint pendingFriend_FK_2 foreign key (toID) references profile(userID)
 );
@@ -48,9 +48,9 @@ CREATE TABLE messageRecipient(
     CONSTRAINT messagesRecipient_fk_2 foreign key (userID) references profile(userID)
 );
 
-CREATE TABLE "group"(
-    gID integer,
-    name varchar(50),
+CREATE TABLE groupInfo(
+    gID SERIAL,
+    name varchar(50) UNIQUE,
     size integer,
     description varchar(200),
     CONSTRAINT group_pk primary key (gID)
@@ -61,7 +61,7 @@ CREATE TABLE groupMember(
     userID integer,
     role varchar(20),
     PRIMARY KEY (gID, userID),
-    CONSTRAINT groupMember_fk1 FOREIGN KEY (gID) REFERENCES "group"(gID),
+    CONSTRAINT groupMember_fk1 FOREIGN KEY (gID) REFERENCES groupinfo(gID),
     CONSTRAINT groupMember_fk2 FOREIGN KEY (userID) REFERENCES profile(userID)
 );
 
@@ -70,7 +70,7 @@ CREATE TABLE pendingGroupMember(
     userID integer,
     message varchar(200),
     PRIMARY KEY (gID, userID),
-    CONSTRAINT pendingGroupMember_fk1 FOREIGN KEY (gID) REFERENCES "group"(gID),
+    CONSTRAINT pendingGroupMember_fk1 FOREIGN KEY (gID) REFERENCES groupinfo(gID),
     CONSTRAINT pendingGroupMember_fk2 FOREIGN KEY (userID) REFERENCES profile(userID)
 );
 
