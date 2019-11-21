@@ -52,10 +52,9 @@ public class PittSocial{
         props.setProperty("password", "password");
          Connection conn = DriverManager.getConnection(url, props);
         Statement st = conn.createStatement();
-        String query = "SELECT password, userID FROM profile where email = '" + email + "'";
+        String query = "SELECT password, userID FROM profile where email = '" + email + "' AND password = '" + pwd + "'";
         ResultSet res = st.executeQuery(query);
-        res.next();
-        if(res.getString(1).equals(pwd)){
+        if(res.next()){
             user_id = res.getInt(2);    
             while(1 == 1){
                 System.out.println(" WELCOME !");
@@ -83,6 +82,8 @@ public class PittSocial{
                     initiateFriendship(Integer.parseInt(input));
                 }else if(input.equals("2")){
                     createGroup();
+                }else if(input.equals("3")){
+                	initiateAddingGroup(conn, scanner);
                 }else if(input.equals("5")){
                     sendMessageToUser();
                 }else if(input.equals("6")){
@@ -189,6 +190,37 @@ public class PittSocial{
         System.out.println("Group created");
     }
 
+    private static void initiateAddingGroup(Connection conn, Scanner scanner) throws SQLException{
+    	PreparedStatement stmt = conn.prepareStatement("SELECT name FROM groupInfo WHERE gid = ?");
+    	System.out.println("Please enter the gID of the group you would like to join");
+    	int gid = Integer.parseInt(scanner.nextLine());
+    	stmt.setInt(1, gid);
+    	ResultSet rs;
+    	try{
+    		rs = stmt.executeQuery();
+    	}catch(SQLException e){
+    		System.out.println("SQL Error: Failed to retreive group");
+    		scanner.close();
+            return;
+    	}
+    	if(rs.next()){
+    		System.out.println("Enter a message for your group request");
+    		stmt = conn.prepareStatement("INSERT INTO pendingGroupMember VALUES(" + gid + ", " + user_id + ", ?)");
+    		String input = scanner.nextLine();
+    		stmt.setString(1, input.substring(0, Math.min(input.length(), 200)));
+    		try{
+    			stmt.execute();
+    		}catch(SQLException e1){
+    			System.out.println("SQL Error: Group request already pending");
+    			return;
+    		}
+    		System.out.println("Request sent to " + rs.getString(1) + " with message: " + input.substring(0, Math.min(input.length(), 200)));
+    	}else{
+    		System.out.println("No group with that ID");
+    		return;
+    	}
+    }
+    
     private static void sendMessageToUser()throws
             SQLException, ClassNotFoundException{
         Class.forName("org.postgresql.Driver");
