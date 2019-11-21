@@ -15,7 +15,7 @@ public class PittSocial{
         System.out.println("=========================WELCOME TO PITT SOCIAL=========================");
         System.out.println("Here's is the menu, please enter the number of the service you are looking for:");
         System.out.println("1. Login");
-        System.out.println("2. Doesn't have an account? Create one");
+        System.out.println("2. Don't have an account? Create one");
         System.out.println("3. Exit");
         System.out.println("========================================================================");
         Scanner scanner = new Scanner(System. in);
@@ -49,7 +49,7 @@ public class PittSocial{
         Statement st = conn.createStatement();
         String query = "SELECT password FROM profile where email = " + email;
         ResultSet res = st.executeQuery(query);
-        if(res.equals(pwd)){
+        if(res.getString(1).equals(pwd)){
             System.out.println(" WELCOME !");
             System.out.println("========================================================================");
             System.out.println("Here is the menu, please enter the number of the service you are looking for:");
@@ -62,12 +62,12 @@ public class PittSocial{
             System.out.println("7. Check received messages ");
             System.out.println("8. Check the newest received messages. ");
             System.out.println("9. List current freinds. ");
-            System.out.printnln("10. Search for a friend. ");
+            System.out.println("10. Search for a friend. ");
             System.out.println("11. Search for three Degress. ");
             System.out.println("12. List the messages in the past months. ");
             System.out.println("13. Log out. ");
             System.out.println("========================================================================");
-            Scanner scanner = new Scanner(System. in);
+            scanner = new Scanner(System. in);
             String input = scanner. nextLine();
         }else{
             System.out.println("Password not matched, sorry");
@@ -78,6 +78,25 @@ public class PittSocial{
 
     private static void createAccount(){
 
+    }
+    private static void initiateFriendship(int friendID) throws ClassNotFoundException, SQLException{
+    	Class.forName("org.postgresql.Driver");
+        String url = "jdbc:postgresql://localhost/postgres";
+        Properties props = new Properties();
+        props.setProperty("user", "postgres");
+        props.setProperty("password", "19990406");
+        Connection conn = DriverManager.getConnection(url, props);
+        Statement st = conn.createStatement();
+        String query = "SELECT name FROM profile WHERE userID = " + friendID;
+        ResultSet res = st.executeQuery(query);
+        if(res.next()){
+        	System.out.println("Please enter a message for your friend request to " + res.getString(1) + " (200 char max)");
+        	Scanner scanner = new Scanner(System. in);
+            String input = scanner.nextLine();
+        }else{
+        	System.out.println("User does not exist");
+        	conn.close();
+        }
     }
 
     private static void sendMessageToUser(){
