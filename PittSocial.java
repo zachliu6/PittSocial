@@ -2,6 +2,7 @@ import java.util.Properties;
 import java.sql.*;
 import java.util.Scanner;
 import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class PittSocial{
         public static int user_id; // global variable so there's no need to search for user's ID everytime
@@ -90,7 +91,11 @@ public class PittSocial{
                     displayMessages();
                 }else if(input.equals("8")){
                     displayNewMessages();
-                }else if
+                }else if(input.equals("9")){
+                    displayFriends();
+                }else if(input.equals("10")){
+                    //searchForUser();
+                }
             }
         }else{
             System.out.println("Password not matched, sorry");
@@ -194,17 +199,16 @@ public class PittSocial{
         Connection conn = DriverManager.getConnection(url, props);
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        PreparedStatement st = conn.prepareStatement();
-        String query = "INSERT INTO message values (DEFALUT, " + user_id +", ?,?,NULL," + formatter.format(date)+ ")";
-        System.out.println("Please enter the iD of the user you are sending message to: ");
+        PreparedStatement st = conn.prepareStatement("INSERT INTO message values (DEFALUT, " + user_id +", ?,?,NULL," + formatter.format(date)+ ")");
         Scanner scanner = new Scanner(System. in);
-        String id = scanner. nextLine();
-        st.setString(1, input);
         System.out.println("Please enter the message you want to send: ");
-        String msg = scanner. nextLine();
-        st.setString(2, input);
+        String msg = scanner. nextLine();        
+        st.setString(1, msg);
+        System.out.println("Please enter the iD of the user you are sending message to: ");
+        String id = scanner. nextLine();
+        st.setString(2, id);
         try{
-            ResultSet res = st.executeQuery(query);
+            ResultSet res = st.executeQuery();
         }catch (SQLException e1) {
             System.out.println("SQL Error");
             while (e1 != null) {
@@ -227,17 +231,18 @@ public class PittSocial{
         props.setProperty("user", "postgres");
         props.setProperty("password", "password");
         Connection conn = DriverManager.getConnection(url, props);
-        System.out.println("Please enter the ID of the group you are sending message to: ");
-        Scanner scanner = new Scanner(System. in);
-        String id = scanner. nextLine();
+        Scanner scanner = new Scanner(System.in);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        Date date = new Date();
+        PreparedStatement st = conn.prepareStatement("INSERT INTO message values (DEFALUT," + user_id +",?,NULL,?,"+ formatter.format(date)+ ")");
         System.out.println("Please enter the message you want to send: ");
         String msg = scanner. nextLine();
-        Statement st = conn.createStatement();
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        String query = "INSERT INTO message values (DEFALUT," + user_id +","+ msg + ",NULL," + id + formatter.format(date)+ ")";
+        st.setString(1,msg);
+        System.out.println("Please enter the ID of the group you are sending message to: ");
+        String id = scanner. nextLine();
+        st.setString(2,id);
         try{
-            ResultSet res = st.executeQuery(query);
+            ResultSet res = st.executeQuery();
         }catch (SQLException e1) {
             System.out.println("SQL Error");
             while (e1 != null) {
@@ -265,7 +270,8 @@ public class PittSocial{
         String query = "SELECT * FROM messages where touserid = " + user_id;
         try{
             ResultSet res = st.executeQuery(query);
-            String sender, msg;
+            int sender;
+            String msg;
             while (res.next()) {
                 sender = res.getInt(2);
                 msg = res.getString(3);
@@ -280,12 +286,11 @@ public class PittSocial{
                 e1 = e1.getNextException();
             }
             conn.close();
-            scanner.close();
             return;
         } 
     }
 
-    private static void displayNewMessages(connection conn)throws
+    private static void displayNewMessages()throws
             SQLException, ClassNotFoundException{
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
@@ -298,15 +303,16 @@ public class PittSocial{
         ResultSet res = st.executeQuery(query);
         Date date;
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        date = formatter.format(res);
-        Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+        date = res.getDate("lastlogin");
+        Statement st2 = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
         query = "SELECT * from messages where timeSent >" + date + " or timeSent = " + date + " AND touserid =" + user_id;
         try{
-            ResultSet res = st.executeQuery(query);
-            String sender, msg;
-            while (res.next()) {
-                sender = res.getInt(2);
-                msg = res.getString(3);
+            ResultSet res2 = st2.executeQuery(query);
+            int sender;
+            String msg;
+            while (res2.next()) {
+                sender = res2.getInt(2);
+                msg = res2.getString(3);
                 System.out.println( "From user " + sender + ", cotent: " + msg);
             }
        }catch (SQLException e1) {
@@ -318,10 +324,62 @@ public class PittSocial{
                 e1 = e1.getNextException();
             }
             conn.close();
-            scanner.close();
             return;
         } 
     }
 
-    private static void 
+    private static void displayFriends()throws
+            SQLException, ClassNotFoundException{
+                Class.forName("org.postgresql.Driver");
+        String url = "jdbc:postgresql://localhost/postgres";
+        Properties props = new Properties();
+        props.setProperty("user", "postgres");
+        props.setProperty("password", "password");
+        Connection conn = DriverManager.getConnection(url, props);
+        Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+        String query = "SELECT * FROM friend where userid1 = " + user_id + "OR userid2 = " + user_id;
+        try{
+            ResultSet res = st.executeQuery(query);
+            int id1, id2;
+            String name, email;
+            System.out.println("Here is the list of your friends: ");
+            while (res.next()) {
+                id1 = res.getInt(1);
+                id2 = res.getInt(2);
+                    if(id1 == user_id){
+                           System.out.println("User ID: " + id2 );
+                    }else{
+                        System.out.println("User ID: " + id1 );
+                    }
+            }
+            while(true){
+                PreparedStatement st2 = conn.prepareStatement("SELECT name, email FROM frofile where userid = ?");
+                System.out.println("Please enter the ID of the user's profile you'd like to see: ");
+                Scanner scan = new Scanner(System.in);
+                int input = scan.nextInt();
+                if(input==0){
+                    return;
+                }else{
+                            st2.setInt(1,input);
+                            ResultSet res2 = st2.executeQuery();
+                            while(res2.next()){
+                                name = res2.getString(2);
+                                email = res2.getString(3);
+                                System.out.println("Friend's name is " + name + " and email is " + email);
+                            }
+                }
+            }
+       }catch (SQLException e1) {
+            System.out.println("SQL Error");
+            while (e1 != null) {
+                System.out.println("Message = " + e1.getMessage());
+                System.out.println("SQLState = "+ e1.getSQLState());
+                System.out.println("SQL Code = "+ e1.getErrorCode());
+                e1 = e1.getNextException();
+            }
+            conn.close();
+            return;
+        } 
+    }
+
 }
