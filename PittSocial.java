@@ -12,7 +12,10 @@ public class PittSocial{
         Properties props = new Properties();
         props.setProperty("user", "postgres");
         props.setProperty("password", "19990406");
-        System.out.println("=========================WELCOME TO PITT SOCIAL=========================");
+        home();
+    }
+    private static void home() throws ClassNotFoundException, SQLException{
+    	System.out.println("=========================WELCOME TO PITT SOCIAL=========================");
         System.out.println("Here's is the menu, please enter the number of the service you are looking for:");
         System.out.println("1. Login");
         System.out.println("2. Don't have an account? Create one");
@@ -44,31 +47,42 @@ public class PittSocial{
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "19990406");
+        props.setProperty("password", "password");
          Connection conn = DriverManager.getConnection(url, props);
         Statement st = conn.createStatement();
-        String query = "SELECT password FROM profile where email = " + email;
+        String query = "SELECT password, userID FROM profile where email = '" + email + "'";
         ResultSet res = st.executeQuery(query);
+        res.next();
         if(res.getString(1).equals(pwd)){
-            System.out.println(" WELCOME !");
-            System.out.println("========================================================================");
-            System.out.println("Here is the menu, please enter the number of the service you are looking for:");
-            System.out.println("1. Send friend request.");
-            System.out.println("2. Create group.");
-            System.out.println("3. Send group join request. ");
-            System.out.println("4. Check pending frend requests. ");
-            System.out.println("5. Send message to a user. ");
-            System.out.println("6. Send message to a group " );
-            System.out.println("7. Check received messages ");
-            System.out.println("8. Check the newest received messages. ");
-            System.out.println("9. List current freinds. ");
-            System.out.println("10. Search for a friend. ");
-            System.out.println("11. Search for three Degress. ");
-            System.out.println("12. List the messages in the past months. ");
-            System.out.println("13. Log out. ");
-            System.out.println("========================================================================");
-            scanner = new Scanner(System. in);
-            String input = scanner. nextLine();
+        	user_id = res.getInt(2);   	
+        	while(1 == 1){
+        		System.out.println(" WELCOME !");
+        		System.out.println("========================================================================");
+        		System.out.println("Here is the menu, please enter the number of the service you are looking for:");
+        		System.out.println("1. Send friend request.");
+        		System.out.println("2. Create group.");
+        		System.out.println("3. Send group join request. ");
+        		System.out.println("4. Check pending frend requests. ");
+        		System.out.println("5. Send message to a user. ");
+        		System.out.println("6. Send message to a group " );
+        		System.out.println("7. Check received messages ");
+        		System.out.println("8. Check the newest received messages. ");
+        		System.out.println("9. List current freinds. ");
+        		System.out.println("10. Search for a friend. ");
+        		System.out.println("11. Search for three Degress. ");
+        		System.out.println("12. List the messages in the past months. ");
+        		System.out.println("13. Log out. ");
+        		System.out.println("========================================================================");
+        		scanner = new Scanner(System. in);
+        		String input = scanner.nextLine();
+        		if(input.equals("1")){
+        			System.out.println("Enter the ID of the user you would like to send a request to");
+        			input = scanner.nextLine();
+        			initiateFriendship(Integer.parseInt(input));
+        		}else if(input.equals("2")){
+        			createGroup();
+        		}
+        	}
         }else{
             System.out.println("Password not matched, sorry");
             System.exit(0);
@@ -84,7 +98,7 @@ public class PittSocial{
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "19990406");
+        props.setProperty("password", "password");
         Connection conn = DriverManager.getConnection(url, props);
         Statement st = conn.createStatement();
         String query = "SELECT name FROM profile WHERE userID = " + friendID;
@@ -93,12 +107,74 @@ public class PittSocial{
         	System.out.println("Please enter a message for your friend request to " + res.getString(1) + " (200 char max)");
         	Scanner scanner = new Scanner(System. in);
             String input = scanner.nextLine();
+            input = input.substring(0, Math.min(input.length(), 200));//shortens message if more than 200 chars
+            PreparedStatement stmt = conn.prepareStatement("INSERT INTO pendingFriend VALUES (" + user_id + ", " + friendID + ", ?)");
+            stmt.setString(1, input);
+            try{
+            	stmt.execute();
+            }catch (SQLException e1) {
+                System.out.println("Friend request already pending");
+                conn.close();
+                return;
+            }
         }else{
         	System.out.println("User does not exist");
         	conn.close();
         }
     }
 
+    private static void createGroup() throws ClassNotFoundException, SQLException{
+    	Class.forName("org.postgresql.Driver");
+        String url = "jdbc:postgresql://localhost/postgres";
+        Properties props = new Properties();
+        props.setProperty("user", "postgres");
+        props.setProperty("password", "password");
+        Connection conn = DriverManager.getConnection(url, props);
+        PreparedStatement stmt = conn.prepareStatement("INSERT INTO groupInfo(name, description, size) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+        System.out.println("Please enter a name for your group");
+        Scanner scanner = new Scanner(System. in);
+        String input = scanner.nextLine();
+        stmt.setString(1, input);
+        System.out.println("Enter a description for your group");
+        input = scanner.nextLine();
+        stmt.setString(2, input);
+        System.out.println("Enter a max size for your group");
+        input = scanner.nextLine();
+        stmt.setInt(3, Integer.parseInt(input));
+        try{
+        	stmt.execute();
+        }catch (SQLException e1) {
+            System.out.println("Group with that name already exists");
+            conn.close();
+            scanner.close();
+            return;
+        }
+        //get the autogenerated gid of the new group
+        int gid = -1;
+        try (ResultSet newGid = stmt.getGeneratedKeys()) {
+            if (newGid.next()) {
+                gid = newGid.getInt(1);
+            }
+            else {
+                System.out.println("Creating group failed, no ID obtained.");
+                conn.close();
+                scanner.close();
+                return;
+            }
+        }
+        //add the current user as a manager
+        stmt = conn.prepareStatement("INSERT INTO groupmember VALUES(" + gid + ", " + user_id + ", 'manager')");
+        try{
+            stmt.execute();
+        }catch (SQLException e1) {
+            System.out.println("Failed to add to user as group manager");
+            conn.close();
+            scanner.close();
+            return;
+        }  
+        System.out.println("Group created");
+    }
+    
     private static void sendMessageToUser(){
         System.out.println("Please enter the name of the user you are sending message to: ");
         Scanner scanner = new Scanner(System. in);
