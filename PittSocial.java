@@ -3,6 +3,7 @@ import java.sql.*;
 import java.util.Scanner;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class PittSocial{
         public static int user_id; // global variable so there's no need to search for user's ID everytime
@@ -98,6 +99,12 @@ public class PittSocial{
                     displayFriends();
                 }else if(input.equals("10")){
                     //searchForUser();
+                }else if(input.equals("11")){
+                    threeFriends();
+                }else if(input.equals("12")){
+                    topMessages();
+                }else if(input.equals("13")){
+                    logout();
                 }
             }
         }else{
@@ -458,14 +465,88 @@ public class PittSocial{
         } 
     }
 
-    private static void threeFriends(String userID)
-    {
+    private static void threeFriends()
+    {   
+        int friend2;
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Please enter the number of the User ID");
+        int targetID = scan.nextInt();
+        boolean found = false;
+        ArrayList<Integer> path = new ArrayList<Integer>();
+        path.add(user_id);
+        Class.forName("org.postgresql.Driver");
+        String url = "jdbc:postgresql://localhost/postgres";
+        Properties props = new Properties();
+        props.setProperty("user", "postgres");
+        props.setProperty("password", "password");
+        Connection conn = DriverManager.getConnection(url, props);
+        Statement stmt = conn.createStatement();
+        String query = "SELECT * from friend where userID1 = " + String.valueOf(user_id) + ";";
+        ResultSet rs1 = stmt.executeQuery(query);
+        while(rs1.next() && !found)
+        {
+            int friend = rs1.getInt(2);
+            if(friend == targetID)
+            {
+                found = true;
+                path.add(friend);
+            }
+            if(!found)
+            {
+                Statement stmt2 = conn.createStatement();
+                String query1 = "SELECT * from friend where userID1 = " + String.valueOf(friend) + ";";
+                ResultSet rs2 = stmt2.executeQuery(query1);
+                while(rs2.next() && !found)
+                {
+                    friend2 = rs2.getInt(2);
+                    if(friend2 == targetID)
+                    {
+                        found = true;
+                        path.add(friend);
+                        path.add(friend2);
+                    }
+                }
+                if(!found)
+                {
+                    Statement stmt3 = conn.createStatement();
+                    String query2 = "SELECT * from friend where userID1 = " + String.valueOf(friend2) + ";";
+                    ResultSet rs3 = stmt3.executeQuery(query2);
+                    while(rs3.next() && !found)
+                    {
+                        int friend3 = rs3.getInt(2);
+                        if(friend3 == targetID)
+                        {
+                            found = true;
+                            path.add(friend);
+                            path.add(friend2);
+                            path.add(friend3);
+                        }
+                    }
+                }
+            }
+
+        }
+        if(path.size > 1)
+        {
+            for (int i = 0; i < path.size; i++) {
+                System.out.println(path.get(i));
+            }
+        }
+        else
+        {
+            System.out.println("No path found between those friends.");
+        }
 
     }
 
-    private static void topMessages(k, x)
-    {
+    private static void topMessages()
+    {   
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Please enter the number of user: ");
+        int k = scan.nextInt();
         String numUsers = String.valueOf(k);
+        System.out.println("Please enter the number of message: ");
+        int x = scan.nextInt();
         String numMessages = String.valueOf(x);
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
@@ -475,14 +556,14 @@ public class PittSocial{
         Connection conn = DriverManager.getConnection(url, props);
         Statement stmt = conn.createStatement();
         String query = "SELECT fromID, COUNT(fromID) from messageInfo where toUserID = " + String.valueOf(user_id) +
-                " group by fromID order by count(fromID) desc limit " + numUsers;
-        String query1 = "SELECT count(*) from messageInfo where timeSent > (timeSent::time - INTERVAL '" + numMessages + " month')::timestamp";
+                " group by fromID order by count(fromID) desc limit " + numUsers + ";";
+        String query1 = "SELECT count(*) from messageInfo where timeSent > (timeSent::time - INTERVAL '" + numMessages + " month')::timestamp;";
         ResultSet rs1 = stmt.executeQuery(query);
         ResultSet rs2 = stmt.executeQuery(query1);
         System.out.println("Top users: ");
         while(rs1.next())
         {
-            Sting user = rs1.getString(1);
+            String user = rs1.getString(1);
             System.out.println(user);
         }
         int messages = rs2.getInt(1);
@@ -499,15 +580,40 @@ public class PittSocial{
         props.setProperty("password", "password");
         Connection conn = DriverManager.getConnection(url, props);
         Statement stmt = conn.createStatement();
-        String query = "UPDATE profile set lastlogin = CURRENT_TIMESTAMP where userID = " + String.valueOf(user_id);
+        String query = "UPDATE profile set lastlogin = CURRENT_TIMESTAMP where userID = " + String.valueOf(user_id) + ";";
         stmt.executeQuery(query);
         home();
     }
 
+    private static void dropUser()
+    {
+        Class.forName("org.postgresql.Driver");
+        String url = "jdbc:postgresql://localhost/postgres";
+        Properties props = new Properties();
+        props.setProperty("user", "postgres");
+        props.setProperty("password", "password");
+        Connection conn = DriverManager.getConnection(url, props);
+        Statement stmt = conn.createStatement();
+        String query = "DELETE FROM profile where userID = " + String.valueOf(user_id) + ";";
+        String query1 = "DELETE FROM groupMember where userID = " + String.valueOf(user_id) + ";";
+        String query2 = "DELETE FROM messageInfo where fromID = " + String.valueOf(user_id) + " or toUserID = " + String.valueOf(user_id) + ";";
+        stmt.executeQuery(query1);
+        stmt.executeQuery(query2);
+        logout();
+    }
+
     private static void exit()
     {
-        logout();
-        exit(0);
+        Class.forName("org.postgresql.Driver");
+        String url = "jdbc:postgresql://localhost/postgres";
+        Properties props = new Properties();
+        props.setProperty("user", "postgres");
+        props.setProperty("password", "password");
+        Connection conn = DriverManager.getConnection(url, props);
+        Statement stmt = conn.createStatement();
+        String query = "UPDATE profile set lastlogin = CURRENT_TIMESTAMP where userID = " + String.valueOf(user_id) + ";";
+        stmt.executeQuery(query);
+        System.exit(0);
     }
 
 }
