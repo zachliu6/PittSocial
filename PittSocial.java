@@ -2,6 +2,7 @@ import java.util.Properties;
 import java.sql.*;
 import java.util.Scanner;
 import java.util.Date;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -114,8 +115,39 @@ public class PittSocial{
         }
     }
 
-    private static void createAccount(){
-
+    private static void createAccount() throws SQLException, ClassNotFoundException{
+    	Class.forName("org.postgresql.Driver");
+        String url = "jdbc:postgresql://localhost/postgres";
+        Properties props = new Properties();
+        props.setProperty("user", "postgres");
+        props.setProperty("password", password);
+        Connection conn = DriverManager.getConnection(url, props);
+        PreparedStatement stmt = conn.prepareStatement("INSERT INTO profile(name, email, password, date_of_birth) VALUES (?,?,?,?)");
+        System.out.println("Enter your name");
+        Scanner scanner = new Scanner(System.in);
+        stmt.setString(1, scanner.nextLine());
+        System.out.println("Enter your email");
+        stmt.setString(2, scanner.nextLine());
+        System.out.println("Enter a password");
+        stmt.setString(3, scanner.nextLine());
+        System.out.println("Enter your birtday in the format yyyy-MM-DD");
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-DD"); 
+        java.sql.Date date = java.sql.Date.valueOf(scanner.nextLine());
+        stmt.setDate(4, date);
+        try{
+            stmt.execute();
+        }catch (SQLException e1) {
+            System.out.println("SQL Error retreiving friend requests");
+            while (e1 != null) {
+                System.out.println("Message = " + e1.getMessage());
+                System.out.println("SQLState = "+ e1.getSQLState());
+                System.out.println("SQL Code = "+ e1.getErrorCode());
+                e1 = e1.getNextException();
+            }
+            return;
+        }
+        System.out.println("Account Created");
+        login();
     }
 
     private static void initiateFriendship(int friendID) throws ClassNotFoundException, SQLException{
