@@ -473,7 +473,7 @@ public class PittSocial{
         System.out.println("Please enter the number of the User ID");
         int targetID = scan.nextInt();
         boolean found = false;
-        ArrayList<Integer> path = new ArrayList<Integer>();
+        List<Integer> path = new ArrayList<>();
         path.add(user_id);
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
@@ -506,7 +506,7 @@ public class PittSocial{
                         path.add(friend);
                         path.add(friend2);
                     }
-                }
+                
                 if(!found)
                 {
                     Statement stmt3 = conn.createStatement();
@@ -523,13 +523,14 @@ public class PittSocial{
                             path.add(friend3);
                         }
                     }
+                    }
                 }
             }
 
         }
-        if(path.size > 1)
+        if(path.size() > 1)
         {
-            for (int i = 0; i < path.size; i++) {
+            for (int i = 0; i < path.size(); i++) {
                 System.out.println(path.get(i));
             }
         }
