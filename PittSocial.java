@@ -7,6 +7,7 @@ import java.util.*;
 
 public class PittSocial{
         public static int user_id; // global variable so there's no need to search for user's ID everytime
+        public static final String password = "password";
 
     public static void main(String args[]) throws
             SQLException, ClassNotFoundException {
@@ -14,7 +15,7 @@ public class PittSocial{
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "19990406");
+        props.setProperty("password", password);
         home();
     }
     private static void home() throws ClassNotFoundException, SQLException{
@@ -50,7 +51,7 @@ public class PittSocial{
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "password");
+        props.setProperty("password", password);
          Connection conn = DriverManager.getConnection(url, props);
         Statement st = conn.createStatement();
         String query = "SELECT password, userID FROM profile where email = '" + email + "' AND password = '" + pwd + "'";
@@ -122,7 +123,7 @@ public class PittSocial{
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "password");
+        props.setProperty("password", password);
         Connection conn = DriverManager.getConnection(url, props);
         Statement st = conn.createStatement();
         String query = "SELECT name FROM profile WHERE userID = " + friendID;
@@ -152,7 +153,7 @@ public class PittSocial{
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "password");
+        props.setProperty("password", password);
         Connection conn = DriverManager.getConnection(url, props);
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO groupInfo(name, description, size) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
         System.out.println("Please enter a name for your group");
@@ -230,7 +231,7 @@ public class PittSocial{
     	}
     }
     
-    private static void confirmRequests(Connection conn, Scanner scanner){
+    private static void confirmRequests(Connection conn, Scanner scanner) throws SQLException{
     	System.out.println("==Friend Requests==");
     	PreparedStatement stmt = conn.prepareStatement("SELECT name, message FROM (pendingfriend full outer join profile p on pendingfriend.fromid = p.userid) WHERE toid = " + user_id);
     	ResultSet res;
@@ -278,7 +279,7 @@ public class PittSocial{
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "password");
+        props.setProperty("password", password);
         Connection conn = DriverManager.getConnection(url, props);
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -312,7 +313,7 @@ public class PittSocial{
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "password");
+        props.setProperty("password", password);
         Connection conn = DriverManager.getConnection(url, props);
         Scanner scanner = new Scanner(System.in);
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -347,7 +348,7 @@ public class PittSocial{
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "password");
+        props.setProperty("password", password);
         Connection conn = DriverManager.getConnection(url, props);
         Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
         String query = "SELECT * FROM messages where touserid = " + user_id;
@@ -379,7 +380,7 @@ public class PittSocial{
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "password");
+        props.setProperty("password", password);
         Connection conn = DriverManager.getConnection(url, props);        
         Statement st = conn.createStatement();
         String query = "SELECT lastlogin FROM profile where userid = " + user_id;
@@ -417,7 +418,7 @@ public class PittSocial{
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "password");
+        props.setProperty("password", password);
         Connection conn = DriverManager.getConnection(url, props);
         Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
         String query = "SELECT * FROM friend where userid1 = " + user_id + "OR userid2 = " + user_id;
@@ -478,7 +479,7 @@ public class PittSocial{
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "password");
+        props.setProperty("password", password);
         Connection conn = DriverManager.getConnection(url, props);
         Statement stmt = conn.createStatement();
         String query = "SELECT * from friend where userID1 = " + String.valueOf(user_id) + ";";
@@ -539,7 +540,7 @@ public class PittSocial{
 
     }
 
-    private static void topMessages()
+    private static void topMessages() throws SQLException
     {   
         Scanner scan = new Scanner(System.in);
         System.out.println("Please enter the number of user: ");
@@ -552,7 +553,7 @@ public class PittSocial{
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "password");
+        props.setProperty("password", password);
         Connection conn = DriverManager.getConnection(url, props);
         Statement stmt = conn.createStatement();
         String query = "SELECT fromID, COUNT(fromID) from messageInfo where toUserID = " + String.valueOf(user_id) +
@@ -571,13 +572,13 @@ public class PittSocial{
         System.out.println(messages);
     }
 
-    private static void logout()
+    private static void logout() throws ClassNotFoundException, SQLException
     {
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "password");
+        props.setProperty("password", password);
         Connection conn = DriverManager.getConnection(url, props);
         Statement stmt = conn.createStatement();
         String query = "UPDATE profile set lastlogin = CURRENT_TIMESTAMP where userID = " + String.valueOf(user_id) + ";";
@@ -585,13 +586,13 @@ public class PittSocial{
         home();
     }
 
-    private static void dropUser()
+    private static void dropUser() throws SQLException
     {
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "password");
+        props.setProperty("password", password);
         Connection conn = DriverManager.getConnection(url, props);
         Statement stmt = conn.createStatement();
         String query = "DELETE FROM profile where userID = " + String.valueOf(user_id) + ";";
@@ -602,13 +603,13 @@ public class PittSocial{
         logout();
     }
 
-    private static void exit()
+    private static void exit() throws ClassNotFoundException, SQLException
     {
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "password");
+        props.setProperty("password", password);
         Connection conn = DriverManager.getConnection(url, props);
         Statement stmt = conn.createStatement();
         String query = "UPDATE profile set lastlogin = CURRENT_TIMESTAMP where userID = " + String.valueOf(user_id) + ";";
