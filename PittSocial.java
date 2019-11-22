@@ -85,6 +85,8 @@ public class PittSocial{
                     createGroup();
                 }else if(input.equals("3")){
                 	initiateAddingGroup(conn, scanner);
+                }else if(input.equals("4")){
+                	confirmRequests(conn, scanner);
                 }else if(input.equals("5")){
                     sendMessageToUser();
                 }else if(input.equals("6")){
@@ -225,6 +227,48 @@ public class PittSocial{
     	}else{
     		System.out.println("No group with that ID");
     		return;
+    	}
+    }
+    
+    private static void confirmRequests(Connection conn, Scanner scanner){
+    	System.out.println("==Friend Requests==");
+    	PreparedStatement stmt = conn.prepareStatement("SELECT name, message FROM (pendingfriend full outer join profile p on pendingfriend.fromid = p.userid) WHERE toid = " + user_id);
+    	ResultSet res;
+    	try{
+            res = stmt.executeQuery();
+        }catch (SQLException e1) {
+            System.out.println("SQL Error retreiving friend requests");
+            while (e1 != null) {
+                System.out.println("Message = " + e1.getMessage());
+                System.out.println("SQLState = "+ e1.getSQLState());
+                System.out.println("SQL Code = "+ e1.getErrorCode());
+                e1 = e1.getNextException();
+            }
+            return;
+        }
+    	int i = 1;
+    	while(res.next()){
+    		System.out.println(i + ") " + res.getString(1) + ": " + res.getString(2));
+    		i++;
+    	}
+    	System.out.println("==Group Requests==");
+    	stmt = conn.prepareStatement("SELECT name, message FROM pendinggroupmember pg natural join (SELECT gid FROM groupmember WHERE role = 'manager' AND userid = " + user_id + ") AS pgg natural join profile"); 
+    	ResultSet gres;
+    	try{
+            gres = stmt.executeQuery();
+        }catch (SQLException e1) {
+            System.out.println("SQL Error retreiving friend requests");
+            while (e1 != null) {
+                System.out.println("Message = " + e1.getMessage());
+                System.out.println("SQLState = "+ e1.getSQLState());
+                System.out.println("SQL Code = "+ e1.getErrorCode());
+                e1 = e1.getNextException();
+            }
+            return;
+        }
+    	while(gres.next()){
+    		System.out.println(i + ") " + res.getString(1) + ": " + res.getString(2));
+    		i++;
     	}
     }
     
