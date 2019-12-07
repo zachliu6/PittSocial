@@ -110,7 +110,12 @@ public class PittSocial{
                 }else if(input.equals("11")){
                     threeDegrees();
                 }else if(input.equals("12")){
-                    topMessages();
+                    Scanner scan = new Scanner(System.in);
+                    System.out.println("Please enter the number of top users you would like to display: ");
+                    int k = scan.nextInt();
+                    System.out.println("Please enter the number of past months you would like to display messages from: ");
+                    int x = scan.nextInt();
+                    topMessages(k, y);
                 }else if(input.equals("13")){
                     logout();
                     System.exit(0);
@@ -665,15 +670,11 @@ public class PittSocial{
 
     }
 
-    private static void topMessages()throws
+    private static void topMessages(int k, int y)throws
             SQLException, ClassNotFoundException{   
         Scanner scan = new Scanner(System.in);
-        System.out.println("Please enter the number of user: ");
-        int k = scan.nextInt();
         String numUsers = String.valueOf(k);
-        System.out.println("Please enter the number of message: ");
-        int x = scan.nextInt();
-        String numMessages = String.valueOf(x);
+        String numMonths = String.valueOf(y);
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
@@ -683,7 +684,7 @@ public class PittSocial{
         st = conn.createStatement();
         String query = "SELECT fromID, COUNT(fromID) from messageInfo where toUserID = " + String.valueOf(user_id) +
                 " group by fromID order by count(fromID) desc limit " + numUsers + ";";
-        String query1 = "SELECT count(*) from messageInfo where timeSent > (CURRENT_TIMESTAMP - " + numMessages + " )::timestamp;";
+        String query1 = "SELECT count(*) from messageInfo where timeSent > (current_timestamp - (" + numMonths + " * interval '1 month'))";
         ResultSet rs1 = st.executeQuery(query);
         ResultSet rs2 = st.executeQuery(query1);
         System.out.println("Top users: ");
@@ -693,7 +694,8 @@ public class PittSocial{
             System.out.println(user);
         }
         int messages = rs2.getInt(1);
-        System.out.println("Number of messages in the past " + numMessages + "months: " + messages);
+        System.out.println("Number of messages in the past " + numMonths + "months: " + messages);
+
     }
 
     private static void logout() throws ClassNotFoundException, SQLException
