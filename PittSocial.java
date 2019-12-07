@@ -93,9 +93,9 @@ public class PittSocial{
                 }else if(input.equals("2")){
                     createGroup();
                 }else if(input.equals("3")){
-                	initiateAddingGroup(conn, scanner);
+                	initiateAddingGroup();
                 }else if(input.equals("4")){
-                	confirmRequests(conn, scanner);
+                	confirmRequests();
                 }else if(input.equals("5")){
                     sendMessageToUser();
                 }else if(input.equals("6")){

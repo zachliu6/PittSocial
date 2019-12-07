@@ -49,3 +49,7 @@ CREATE TRIGGER addMessageRecipient
     AFTER INSERT ON messageInfo
     FOR EACH ROW
     EXECUTE PROCEDURE sendMessage();
+
+select name, email from profile
+where name like '%e%'
+
