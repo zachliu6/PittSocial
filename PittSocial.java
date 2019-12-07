@@ -218,22 +218,8 @@ public class PittSocial{
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
         conn = DriverManager.getConnection(url, props);
-<<<<<<< HEAD
         stmt = conn.prepareStatement("INSERT INTO groupInfo(name, description, size) VALUES (" + name + ", " + description + ", " + maxSize + ")", Statement.RETURN_GENERATED_KEYS);
-=======
         conn.setAutoCommit(false);
-        stmt = conn.prepareStatement("INSERT INTO groupInfo(name, description, size) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-        System.out.println("Please enter a name for your group");
-        Scanner scanner = new Scanner(System. in);
-        String input = scanner.nextLine();
-        stmt.setString(1, input);
-        System.out.println("Enter a description for your group");
-        input = scanner.nextLine();
-        stmt.setString(2, input);
-        System.out.println("Enter a max size for your group");
-        input = scanner.nextLine();
-        stmt.setInt(3, Integer.parseInt(input));
->>>>>>> 32a5265d276e1f593c00f4065b8792382cadf04c
         try{
             stmt.execute();
         }catch (SQLException e1) {
@@ -290,12 +276,11 @@ public class PittSocial{
                 conn.rollback();
     			return;
     		}
-<<<<<<< HEAD
+
     		System.out.println("Request sent to " + rs.getString(1) + " with message: " + message.substring(0, Math.min(input.length(), 200)));
-=======
+
             conn.commit();
-    		System.out.println("Request sent to " + rs.getString(1) + " with message: " + input.substring(0, Math.min(input.length(), 200)));
->>>>>>> 32a5265d276e1f593c00f4065b8792382cadf04c
+
     	}else{
     		System.out.println("No group with that ID");
     		return;
@@ -732,15 +717,13 @@ public class PittSocial{
             System.out.println(user);
         }
         ResultSet rs2 = st.executeQuery(query1);
-<<<<<<< HEAD
+
         rs2.next();
         String messages = rs2.getString(1);
         System.out.println("Number of messages in the past " + numMonths + " months: " + messages);
-=======
-        String messages = rs2.getString(3);
-        System.out.println("Number of messages in the past " + numMonths + "months: " + messages);
+
         conn.commit();
->>>>>>> 32a5265d276e1f593c00f4065b8792382cadf04c
+
 
     }
 
