@@ -10,8 +10,8 @@ public class PittSocial{
         public static int user_id; // global variable so there's no need to search for user's ID everytime
         public static final String password = "password";
         public static Connection conn;
-        public Statement st;
-        public PreparedStatement stmt;
+        public static Statement st;
+        public static PreparedStatement stmt;
 
     public static void main(String args[]) throws
             SQLException, ClassNotFoundException {
@@ -119,7 +119,7 @@ public class PittSocial{
             System.out.println("Password not matched, sorry");
             System.out.println("Do you want to log out? (Y/N)");
             String response = scanner.nextLine();
-            if(respons == 'Y'){
+            if(response == "Y"){
                 System.exit(0);
             }
         }
@@ -335,20 +335,20 @@ public class PittSocial{
         String id = scanner. nextLine();        
         int found = 0;
         String query = "select * from friend f where f.userid1 = " + user_id;
-        Statement st2 = conn.prepareStatement(query);
-        ResultSet res = st2.executeQuery();
+        Statement st2 = conn.createStatement();
+        ResultSet res = st2.executeQuery(query);
         while(res.next()){
-            if(res.getInt(1) == id){
+            if(res.getString(1) == id){
                 found = 1;
             }
         }
         if(found != 1){
             query = "select * from friend f where f.userid2 = " + user_id;
-        st2 = conn.prepareStatement(query);
-        res = st2.executeQuery();
+        st2 = conn.createStatement();
+        res = st2.executeQuery(query);
         }
         while(res.next()){
-            if(res.getInt(1) == id){
+            if(res.getString(1) == id){
                 found = 1;
             }
         }
@@ -357,9 +357,9 @@ public class PittSocial{
             return;
         }
         query = "select name from profile where userid = " + id;
-        st2 = conn.prepareStatement(query);
-        res = st2.executeQuery();
-        System.out.println("The user's name you want to send a messag eto is " + res.getString(1));
+        st2 = conn.createStatement();
+        res = st2.executeQuery(query);
+        System.out.println("The user's name you want to send a message to is " + res.getString(1));
         stmt.setString(2, id);
         try{
             stmt.execute();
@@ -376,7 +376,7 @@ public class PittSocial{
             return;
         }
         scanner.close();
-        System.out.println("Message Sent!")
+        System.out.println("Message Sent!");
     }
 
     private static void sendMessageToGroup()throws 
@@ -393,14 +393,14 @@ public class PittSocial{
         stmt = conn.prepareStatement("INSERT INTO message values (DEFALUT," + user_id +",?,NULL,?,"+ formatter.format(date)+ ")");
         System.out.println("Please enter the message you want to send: ");
         String msg = scanner. nextLine();
-        st.setString(1,msg);
+        stmt.setString(1,msg);    
         System.out.println("Please enter the ID of the group you are sending message to: ");
         String id = scanner. nextLine();
-        st.setString(2,id);
+        stmt.setString(2,id);
         int found = 0;
         String query = "select userid from groupmember where gid = " + id;
-        Statement st2 = conn.prepareStatement(query);
-        ResultSet res = st2.executeQuery();
+        Statement st2 = conn.createStatement();
+        ResultSet res = st2.executeQuery(query);
         while(res.next()){
             if(res.getInt(1) == user_id){
                 found = 1;
@@ -411,7 +411,7 @@ public class PittSocial{
             return;
         }
         try{
-             st.execute();
+             stmt.execute();
         }catch (SQLException e1) {
             System.out.println("SQL Error, message sending failed!");
             while (e1 != null) {
@@ -479,7 +479,7 @@ public class PittSocial{
         //st = conn.createStatement();
         query = "SLECT msgid, message from messages full outer join messagerecipient m on messages.msgid = m.msgid where timeSent >" + date + " or timeSent = " + date + " AND m.userid = " + user_id;
         try{
-            ResultSet res2 = st2.executeQuery(query);
+            ResultSet res2 = st.executeQuery(query);
             int msgId;
             String msg;
             while (res2.next()) {
@@ -555,7 +555,8 @@ public class PittSocial{
         } 
     }
 
-    private static void threeDegrees()
+    private static void threeDegrees()throws
+            SQLException, ClassNotFoundException
     {   
         int friend2;
         Scanner scan = new Scanner(System.in);
@@ -630,8 +631,8 @@ public class PittSocial{
 
     }
 
-    private static void topMessages() throws SQLException
-    {   
+    private static void topMessages()throws
+            SQLException, ClassNotFoundException{   
         Scanner scan = new Scanner(System.in);
         System.out.println("Please enter the number of user: ");
         int k = scan.nextInt();
@@ -676,8 +677,8 @@ public class PittSocial{
         home();
     }
 
-    private static void dropUser() throws SQLException
-    {
+    private static void dropUser()throws
+            SQLException, ClassNotFoundException{
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
