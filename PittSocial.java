@@ -115,7 +115,7 @@ public class PittSocial{
                     int k = scan.nextInt();
                     System.out.println("Please enter the number of past months you would like to display messages from: ");
                     int x = scan.nextInt();
-                    topMessages(k, y);
+                    topMessages(k, x);
                 }else if(input.equals("13")){
                     logout();
                     System.exit(0);
@@ -511,11 +511,12 @@ public class PittSocial{
                 st = conn.createStatement();
         System.out.println("Please enter the name/email of the user you are seaching for: ");
         Scanner scan = new Scanner(System.in);
-        while(scan.hasNext()){
-        String str = scan.next();
-        String query = "SELECT name, email FROM profile where name like '" + str + "%'";
-        System.out.println("===Here are the users found:===");
-        stmt = conn.prepareStatement();
+        String str = scan.nextLine();
+        String[] splitStr = str.split("\\s+");
+                System.out.println("===Here are the users found:===");
+        for(int i=0; i<splitStr.length; i++){
+        String query = "SELECT name, email FROM profile where name like '%" + splitStr[i] + "%' AND email like '%" + splitStr[i] + "%'";
+            stmt = conn.prepareStatement(query);
             try{
                 ResultSet res2 = st.executeQuery(query);
                 String name;
@@ -686,14 +687,15 @@ public class PittSocial{
                 " group by fromID order by count(fromID) desc limit " + numUsers + ";";
         String query1 = "SELECT count(*) from messageInfo where timeSent > (current_timestamp - (" + numMonths + " * interval '1 month'))";
         ResultSet rs1 = st.executeQuery(query);
-        ResultSet rs2 = st.executeQuery(query1);
+        //ResultSet rs2 = st.executeQuery(query1);
         System.out.println("Top users: ");
         while(rs1.next())
         {
             String user = rs1.getString(1);
             System.out.println(user);
         }
-        int messages = rs2.getInt(1);
+        ResultSet rs2 = st.executeQuery(query1);
+        String messages = rs2.getString(3);
         System.out.println("Number of messages in the past " + numMonths + "months: " + messages);
 
     }
