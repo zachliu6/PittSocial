@@ -8,7 +8,7 @@ import java.util.*;
 
 public class PittSocial{
         public static int user_id; // global variable so there's no need to search for user's ID everytime
-        public static final String password = "postgres";
+        public static final String password = "19990406";
         public static Connection conn;
         public static Statement st;
         public static PreparedStatement stmt;
@@ -106,7 +106,7 @@ public class PittSocial{
                 }else if(input.equals("9")){
                     displayFriends();
                 }else if(input.equals("10")){
-                    //searchForUser();
+                    searchForUser();
                 }else if(input.equals("11")){
                     threeDegrees();
                 }else if(input.equals("12")){
@@ -464,7 +464,7 @@ public class PittSocial{
 
     private static void displayNewMessages()throws
             SQLException, ClassNotFoundException{
-        Class.forName("org.postgresql.Driver");
+        //Class.forName("org.postgresql.Driver");
         //String url = "jdbc:postgresql://localhost/postgres";
         //Properties props = new Properties();
         //props.setProperty("user", "postgres");
@@ -478,7 +478,7 @@ public class PittSocial{
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         date = res.getDate("lastlogin");
         //st = conn.createStatement();
-        query = "SLECT msgid, message from messageInfo full outer join messagerecipient m on messageInfo.msgid = m.msgid where timeSent >" + date + " or timeSent = " + date + " AND m.userid = " + user_id;
+        query = "SELECT msgid, message from messageInfo full outer join messagerecipient m on messageInfo.msgid = m.msgid where timeSent >" + date + " or timeSent = " + date + " AND m.userid = " + user_id;
         try{
             ResultSet res2 = st.executeQuery(query);
             int msgId;
@@ -499,6 +499,39 @@ public class PittSocial{
             return;
         } 
         System.out.println("    ==End==     ");
+    }
+
+    private static void searchForUser() throws
+            SQLException, ClassNotFoundException{
+                st = conn.createStatement();
+        System.out.println("Please enter the name/email of the user you are seaching for: ");
+        Scanner scan = new Scanner(System.in);
+        while(scan.hasNext()){
+        String str = scan.next();
+        String query = "SELECT name, email FROM profile where name like '" + str + "%'";
+        System.out.println("===Here are the users found:===");
+        stmt = conn.prepareStatement();
+            try{
+                ResultSet res2 = st.executeQuery(query);
+                String name;
+                String email;
+                while (res2.next()) {
+                    name = res2.getString(1);
+                    email = res2.getString(2);
+                    System.out.println( "Name: " + name + "Email: " + email);
+            }
+            }catch (SQLException e1){
+                System.out.println("SQL Error, Please try again!");
+                while (e1 != null) {
+                    System.out.println("Message = " + e1.getMessage());
+                    System.out.println("SQLState = "+ e1.getSQLState());
+                    System.out.println("SQL Code = "+ e1.getErrorCode());
+                    e1 = e1.getNextException();
+                }
+            return;
+            }
+        }
+        System.out.println("======End=======");
     }
 
     private static void displayFriends()throws
@@ -650,7 +683,7 @@ public class PittSocial{
         st = conn.createStatement();
         String query = "SELECT fromID, COUNT(fromID) from messageInfo where toUserID = " + String.valueOf(user_id) +
                 " group by fromID order by count(fromID) desc limit " + numUsers + ";";
-        String query1 = "SELECT count(*) from messageInfo where timeSent > (timeSent::time - INTERVAL '" + numMessages + " month')::timestamp;";
+        String query1 = "SELECT count(*) from messageInfo where timeSent > (CURRENT_TIMESTAMP - " + numMessages + " )::timestamp;";
         ResultSet rs1 = st.executeQuery(query);
         ResultSet rs2 = st.executeQuery(query1);
         System.out.println("Top users: ");
