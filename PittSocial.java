@@ -9,6 +9,9 @@ import java.util.*;
 public class PittSocial{
         public static int user_id; // global variable so there's no need to search for user's ID everytime
         public static final String password = "password";
+        public static Connection conn;
+        public Statement st;
+        public PreparedStatement stmt;
 
     public static void main(String args[]) throws
             SQLException, ClassNotFoundException {
@@ -19,7 +22,9 @@ public class PittSocial{
         props.setProperty("password", password);
         home();
     }
+
     private static void home() throws ClassNotFoundException, SQLException{
+    while(true){
         System.out.println("=========================WELCOME TO PITT SOCIAL=========================");
         System.out.println("Here's is the menu, please enter the number of the service you are looking for:");
         System.out.println("1. Login");
@@ -31,18 +36,19 @@ public class PittSocial{
             if(input.equals("1")){
                 login();
             }else if(input.equals("2")){
-                createAccount();
+                createUser();
             }else if(input.equals("3")){
                 System.out.println("Have a good day, bye!");
                 System.exit(0);
             }else{
                 System.out.println("invalid input!");
-                System.exit(0);
             }
+    }
     }
 
     private static void login()throws
             SQLException, ClassNotFoundException{
+        while(true){
         System.out.println("////// Please enter your email: //////");
         Scanner scanner = new Scanner(System. in);
         String email = scanner.nextLine();
@@ -53,8 +59,8 @@ public class PittSocial{
         Properties props = new Properties();
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
-         Connection conn = DriverManager.getConnection(url, props);
-        Statement st = conn.createStatement();
+        conn = DriverManager.getConnection(url, props);
+        st = conn.createStatement();
         String query = "SELECT password, userID FROM profile where email = '" + email + "' AND password = '" + pwd + "'";
         ResultSet res = st.executeQuery(query);
         if(res.next()){
@@ -102,7 +108,7 @@ public class PittSocial{
                 }else if(input.equals("10")){
                     //searchForUser();
                 }else if(input.equals("11")){
-                    threeFriends();
+                    threeDegrees();
                 }else if(input.equals("12")){
                     topMessages();
                 }else if(input.equals("13")){
@@ -111,18 +117,23 @@ public class PittSocial{
             }
         }else{
             System.out.println("Password not matched, sorry");
-            System.exit(0);
+            System.out.println("Do you want to log out? (Y/N)");
+            String response = scanner.nextLine();
+            if(respons == 'Y'){
+                System.exit(0);
+            }
         }
     }
+    }
 
-    private static void createAccount() throws SQLException, ClassNotFoundException{
+    private static void createUser() throws SQLException, ClassNotFoundException{
     	Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
-        Connection conn = DriverManager.getConnection(url, props);
-        PreparedStatement stmt = conn.prepareStatement("INSERT INTO profile(name, email, password, date_of_birth) VALUES (?,?,?,?)");
+        conn = DriverManager.getConnection(url, props);
+        stmt = conn.prepareStatement("INSERT INTO profile(name, email, password, date_of_birth) VALUES (?,?,?,?)");
         System.out.println("Enter your name");
         Scanner scanner = new Scanner(System.in);
         stmt.setString(1, scanner.nextLine());
@@ -156,8 +167,8 @@ public class PittSocial{
         Properties props = new Properties();
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
-        Connection conn = DriverManager.getConnection(url, props);
-        Statement st = conn.createStatement();
+        conn = DriverManager.getConnection(url, props);
+        st = conn.createStatement();
         String query = "SELECT name FROM profile WHERE userID = " + friendID;
         ResultSet res = st.executeQuery(query);
         if(res.next()){
@@ -165,7 +176,7 @@ public class PittSocial{
             Scanner scanner = new Scanner(System. in);
             String input = scanner.nextLine();
             input = input.substring(0, Math.min(input.length(), 200));//shortens message if more than 200 chars
-            PreparedStatement stmt = conn.prepareStatement("INSERT INTO pendingFriend VALUES (" + user_id + ", " + friendID + ", ?)");
+            stmt = conn.prepareStatement("INSERT INTO pendingFriend VALUES (" + user_id + ", " + friendID + ", ?)");
             stmt.setString(1, input);
             try{
                 stmt.execute();
@@ -186,8 +197,8 @@ public class PittSocial{
         Properties props = new Properties();
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
-        Connection conn = DriverManager.getConnection(url, props);
-        PreparedStatement stmt = conn.prepareStatement("INSERT INTO groupInfo(name, description, size) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+        conn = DriverManager.getConnection(url, props);
+        stmt = conn.prepareStatement("INSERT INTO groupInfo(name, description, size) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
         System.out.println("Please enter a name for your group");
         Scanner scanner = new Scanner(System. in);
         String input = scanner.nextLine();
@@ -233,7 +244,7 @@ public class PittSocial{
     }
 
     private static void initiateAddingGroup(Connection conn, Scanner scanner) throws SQLException{
-    	PreparedStatement stmt = conn.prepareStatement("SELECT name FROM groupInfo WHERE gid = ?");
+    	stmt = conn.prepareStatement("SELECT name FROM groupInfo WHERE gid = ?");
     	System.out.println("Please enter the gID of the group you would like to join");
     	int gid = Integer.parseInt(scanner.nextLine());
     	stmt.setInt(1, gid);
@@ -265,7 +276,7 @@ public class PittSocial{
     
     private static void confirmRequests(Connection conn, Scanner scanner) throws SQLException{
     	System.out.println("==Friend Requests==");
-    	PreparedStatement stmt = conn.prepareStatement("SELECT name, message FROM (pendingfriend full outer join profile p on pendingfriend.fromid = p.userid) WHERE toid = " + user_id);
+    	stmt = conn.prepareStatement("SELECT name, message FROM (pendingfriend full outer join profile p on pendingfriend.fromid = p.userid) WHERE toid = " + user_id);
     	ResultSet res;
     	try{
             res = stmt.executeQuery();
@@ -290,7 +301,7 @@ public class PittSocial{
     	try{
             gres = stmt.executeQuery();
         }catch (SQLException e1) {
-            System.out.println("SQL Error retreiving friend requests");
+            System.out.println("SQL Error retreiving group requests");
             while (e1 != null) {
                 System.out.println("Message = " + e1.getMessage());
                 System.out.println("SQLState = "+ e1.getSQLState());
@@ -300,159 +311,205 @@ public class PittSocial{
             return;
         }
     	while(gres.next()){
-    		System.out.println(i + ") " + res.getString(1) + ": " + res.getString(2));
+    		System.out.println(i + ") " + gres.getString(1) + ": " + gres.getString(2));
     		i++;
     	}
     }
     
     private static void sendMessageToUser()throws
             SQLException, ClassNotFoundException{
-        Class.forName("org.postgresql.Driver");
-        String url = "jdbc:postgresql://localhost/postgres";
-        Properties props = new Properties();
-        props.setProperty("user", "postgres");
-        props.setProperty("password", password);
-        Connection conn = DriverManager.getConnection(url, props);
+        //Class.forName("org.postgresql.Driver");
+        //String url = "jdbc:postgresql://localhost/postgres";
+        //Properties props = new Properties();
+        //props.setProperty("user", "postgres");
+        //props.setProperty("password", password);
+        //Connection conn = DriverManager.getConnection(url, props);
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        PreparedStatement st = conn.prepareStatement("INSERT INTO message values (DEFALUT, " + user_id +", ?,?,NULL," + formatter.format(date)+ ")");
+        stmt = conn.prepareStatement("INSERT INTO message values (DEFALUT, " + user_id +", ?,?,NULL," + formatter.format(date)+ ")");
         Scanner scanner = new Scanner(System. in);
         System.out.println("Please enter the message you want to send: ");
         String msg = scanner. nextLine();        
-        st.setString(1, msg);
+        stmt.setString(1, msg);
         System.out.println("Please enter the iD of the user you are sending message to: ");
-        String id = scanner. nextLine();
-        st.setString(2, id);
+        String id = scanner. nextLine();        
+        int found = 0;
+        String query = "select * from friend f where f.userid1 = " + user_id;
+        Statement st2 = conn.prepareStatement(query);
+        ResultSet res = st2.executeQuery();
+        while(res.next()){
+            if(res.getInt(1) == id){
+                found = 1;
+            }
+        }
+        if(found != 1){
+            query = "select * from friend f where f.userid2 = " + user_id;
+        st2 = conn.prepareStatement(query);
+        res = st2.executeQuery();
+        }
+        while(res.next()){
+            if(res.getInt(1) == id){
+                found = 1;
+            }
+        }
+        if(found != 1){
+            System.out.println("The user you want to send a message to is not your frined, execution failed!");
+            return;
+        }
+        query = "select name from profile where userid = " + id;
+        st2 = conn.prepareStatement(query);
+        res = st2.executeQuery();
+        System.out.println("The user's name you want to send a messag eto is " + res.getString(1));
+        stmt.setString(2, id);
         try{
-            ResultSet res = st.executeQuery();
+            stmt.execute();
         }catch (SQLException e1) {
-            System.out.println("SQL Error");
+            System.out.println("SQL Error, sending failed!");
             while (e1 != null) {
                 System.out.println("Message = " + e1.getMessage());
                 System.out.println("SQLState = "+ e1.getSQLState());
                 System.out.println("SQL Code = "+ e1.getErrorCode());
                 e1 = e1.getNextException();
             }
-            conn.close();
+            //conn.close();
             scanner.close();
             return;
         }
+        scanner.close();
+        System.out.println("Message Sent!")
     }
 
     private static void sendMessageToGroup()throws 
             SQLException, ClassNotFoundException{
-        Class.forName("org.postgresql.Driver");
-        String url = "jdbc:postgresql://localhost/postgres";
-        Properties props = new Properties();
-        props.setProperty("user", "postgres");
-        props.setProperty("password", password);
-        Connection conn = DriverManager.getConnection(url, props);
+        //Class.forName("org.postgresql.Driver");
+        //String url = "jdbc:postgresql://localhost/postgres";
+        //Properties props = new Properties();
+        //props.setProperty("user", "postgres");
+        //props.setProperty("password", password);
+        //Connection conn = DriverManager.getConnection(url, props);
         Scanner scanner = new Scanner(System.in);
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         Date date = new Date();
-        PreparedStatement st = conn.prepareStatement("INSERT INTO message values (DEFALUT," + user_id +",?,NULL,?,"+ formatter.format(date)+ ")");
+        stmt = conn.prepareStatement("INSERT INTO message values (DEFALUT," + user_id +",?,NULL,?,"+ formatter.format(date)+ ")");
         System.out.println("Please enter the message you want to send: ");
         String msg = scanner. nextLine();
         st.setString(1,msg);
         System.out.println("Please enter the ID of the group you are sending message to: ");
         String id = scanner. nextLine();
         st.setString(2,id);
+        int found = 0;
+        String query = "select userid from groupmember where gid = " + id;
+        Statement st2 = conn.prepareStatement(query);
+        ResultSet res = st2.executeQuery();
+        while(res.next()){
+            if(res.getInt(1) == user_id){
+                found = 1;
+            }
+        }
+        if(found != 1){
+            System.out.println("You are not in the group you are sending the message to, execution failed!");
+            return;
+        }
         try{
-            ResultSet res = st.executeQuery();
+             st.execute();
         }catch (SQLException e1) {
-            System.out.println("SQL Error");
+            System.out.println("SQL Error, message sending failed!");
             while (e1 != null) {
                 System.out.println("Message = " + e1.getMessage());
                 System.out.println("SQLState = "+ e1.getSQLState());
                 System.out.println("SQL Code = "+ e1.getErrorCode());
                 e1 = e1.getNextException();
             }
-            conn.close();
+            //conn.close();
             scanner.close();
             return;
         }
-
+        scanner. close();
+        System.out.println("Message sent!");
     }
 
     private static void displayMessages()throws 
             SQLException, ClassNotFoundException{
         Class.forName("org.postgresql.Driver");
-        String url = "jdbc:postgresql://localhost/postgres";
-        Properties props = new Properties();
-        props.setProperty("user", "postgres");
-        props.setProperty("password", password);
-        Connection conn = DriverManager.getConnection(url, props);
-        Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
-        String query = "SELECT * FROM messages where touserid = " + user_id;
+        //String url = "jdbc:postgresql://localhost/postgres";
+        //Properties props = new Properties();
+        //props.setProperty("user", "postgres");
+        //props.setProperty("password", password);
+        //conn = DriverManager.getConnection(url, props);
+        System.out.println("==Messages==");
+        String query = "SELECT * FROM messagerecipient where userid = " + user_id;
+        st = conn.createStatement();
         try{
             ResultSet res = st.executeQuery(query);
-            int sender;
+            int msgId;
             String msg;
             while (res.next()) {
-                sender = res.getInt(2);
-                msg = res.getString(3);
-                System.out.println( "From user " + sender + ", cotent: " + msg);
+                msgId = res.getInt(1);
+                msg = res.getString(2);
+                System.out.println( "Message number " + msgId + ": " + msg);
             }
        }catch (SQLException e1) {
-            System.out.println("SQL Error");
+            System.out.println("SQL Error, Please try again!");
             while (e1 != null) {
                 System.out.println("Message = " + e1.getMessage());
                 System.out.println("SQLState = "+ e1.getSQLState());
                 System.out.println("SQL Code = "+ e1.getErrorCode());
                 e1 = e1.getNextException();
             }
-            conn.close();
             return;
         } 
+        System.out.println("   ==End==   ");
     }
 
     private static void displayNewMessages()throws
             SQLException, ClassNotFoundException{
         Class.forName("org.postgresql.Driver");
-        String url = "jdbc:postgresql://localhost/postgres";
-        Properties props = new Properties();
-        props.setProperty("user", "postgres");
-        props.setProperty("password", password);
-        Connection conn = DriverManager.getConnection(url, props);        
-        Statement st = conn.createStatement();
+        //String url = "jdbc:postgresql://localhost/postgres";
+        //Properties props = new Properties();
+        //props.setProperty("user", "postgres");
+        //props.setProperty("password", password);
+        //conn = DriverManager.getConnection(url, props);        
+        st = conn.createStatement();
+        System.out.println("==New Messages==");
         String query = "SELECT lastlogin FROM profile where userid = " + user_id;
         ResultSet res = st.executeQuery(query);
         Date date;
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         date = res.getDate("lastlogin");
-        Statement st2 = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
-        query = "SELECT * from messages where timeSent >" + date + " or timeSent = " + date + " AND touserid =" + user_id;
+        //st = conn.createStatement();
+        query = "SLECT msgid, message from messages full outer join messagerecipient m on messages.msgid = m.msgid where timeSent >" + date + " or timeSent = " + date + " AND m.userid = " + user_id;
         try{
             ResultSet res2 = st2.executeQuery(query);
-            int sender;
+            int msgId;
             String msg;
             while (res2.next()) {
-                sender = res2.getInt(2);
-                msg = res2.getString(3);
-                System.out.println( "From user " + sender + ", cotent: " + msg);
+                msgId = res2.getInt(1);
+                msg = res2.getString(2);
+                System.out.println( "Message number " + msgId + ": " + msg);
             }
        }catch (SQLException e1) {
-            System.out.println("SQL Error");
+            System.out.println("SQL Error, Please try again!");
             while (e1 != null) {
                 System.out.println("Message = " + e1.getMessage());
                 System.out.println("SQLState = "+ e1.getSQLState());
                 System.out.println("SQL Code = "+ e1.getErrorCode());
                 e1 = e1.getNextException();
             }
-            conn.close();
             return;
         } 
+        System.out.println("    ==End==     ");
     }
 
     private static void displayFriends()throws
             SQLException, ClassNotFoundException{
                 Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
-        Properties props = new Properties();
-        props.setProperty("user", "postgres");
-        props.setProperty("password", password);
-        Connection conn = DriverManager.getConnection(url, props);
-        Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+        //Properties props = new Properties();
+        //props.setProperty("user", "postgres");
+        //props.setProperty("password", password);
+        //Connection conn = DriverManager.getConnection(url, props);
+        st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+        System.out.println("==Friends==");
         String query = "SELECT * FROM friend where userid1 = " + user_id + "OR userid2 = " + user_id;
         try{
             ResultSet res = st.executeQuery(query);
@@ -498,7 +555,7 @@ public class PittSocial{
         } 
     }
 
-    private static void threeFriends()
+    private static void threeDegrees()
     {   
         int friend2;
         Scanner scan = new Scanner(System.in);
@@ -513,9 +570,9 @@ public class PittSocial{
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
         Connection conn = DriverManager.getConnection(url, props);
-        Statement stmt = conn.createStatement();
+        st = conn.createStatement();
         String query = "SELECT * from friend where userID1 = " + String.valueOf(user_id) + ";";
-        ResultSet rs1 = stmt.executeQuery(query);
+        ResultSet rs1 = st.executeQuery(query);
         while(rs1.next() && !found)
         {
             int friend = rs1.getInt(2);
@@ -587,13 +644,13 @@ public class PittSocial{
         Properties props = new Properties();
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
-        Connection conn = DriverManager.getConnection(url, props);
-        Statement stmt = conn.createStatement();
+        conn = DriverManager.getConnection(url, props);
+        st = conn.createStatement();
         String query = "SELECT fromID, COUNT(fromID) from messageInfo where toUserID = " + String.valueOf(user_id) +
                 " group by fromID order by count(fromID) desc limit " + numUsers + ";";
         String query1 = "SELECT count(*) from messageInfo where timeSent > (timeSent::time - INTERVAL '" + numMessages + " month')::timestamp;";
-        ResultSet rs1 = stmt.executeQuery(query);
-        ResultSet rs2 = stmt.executeQuery(query1);
+        ResultSet rs1 = st.executeQuery(query);
+        ResultSet rs2 = st.executeQuery(query1);
         System.out.println("Top users: ");
         while(rs1.next())
         {
@@ -612,10 +669,10 @@ public class PittSocial{
         Properties props = new Properties();
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
-        Connection conn = DriverManager.getConnection(url, props);
-        Statement stmt = conn.createStatement();
+        conn = DriverManager.getConnection(url, props);
+        st = conn.createStatement();
         String query = "UPDATE profile set lastlogin = CURRENT_TIMESTAMP where userID = " + String.valueOf(user_id) + ";";
-        stmt.executeQuery(query);
+        st.executeQuery(query);
         home();
     }
 
@@ -626,13 +683,13 @@ public class PittSocial{
         Properties props = new Properties();
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
-        Connection conn = DriverManager.getConnection(url, props);
-        Statement stmt = conn.createStatement();
+        conn = DriverManager.getConnection(url, props);
+        st = conn.createStatement();
         String query = "DELETE FROM profile where userID = " + String.valueOf(user_id) + ";";
         String query1 = "DELETE FROM groupMember where userID = " + String.valueOf(user_id) + ";";
         String query2 = "DELETE FROM messageInfo where fromID = " + String.valueOf(user_id) + " or toUserID = " + String.valueOf(user_id) + ";";
-        stmt.executeQuery(query1);
-        stmt.executeQuery(query2);
+        st.executeQuery(query1);
+        st.executeQuery(query2);
         logout();
     }
 
@@ -643,10 +700,10 @@ public class PittSocial{
         Properties props = new Properties();
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
-        Connection conn = DriverManager.getConnection(url, props);
-        Statement stmt = conn.createStatement();
+        conn = DriverManager.getConnection(url, props);
+        st = conn.createStatement();
         String query = "UPDATE profile set lastlogin = CURRENT_TIMESTAMP where userID = " + String.valueOf(user_id) + ";";
-        stmt.executeQuery(query);
+        st.executeQuery(query);
         System.exit(0);
     }
 
