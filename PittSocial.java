@@ -8,7 +8,7 @@ import java.util.*;
 
 public class PittSocial{
         public static int user_id; // global variable so there's no need to search for user's ID everytime
-        public static final String password = "password";
+        public static final String password = "postgres";
         public static Connection conn;
         public static Statement st;
         public static PreparedStatement stmt;
@@ -528,7 +528,7 @@ public class PittSocial{
             }
             while(true){
                 PreparedStatement st2 = conn.prepareStatement("SELECT name, email FROM profile where userid = ?");
-                System.out.println("Please enter the ID of the user's profile you'd like to see: ");
+                System.out.println("Please enter the ID of the user's profile you'd like to see(enter 0 to exit): ");
                 Scanner scan = new Scanner(System.in);
                 int input = scan.nextInt();
                 if(input==0){
@@ -537,8 +537,8 @@ public class PittSocial{
                             st2.setInt(1,input);
                             ResultSet res2 = st2.executeQuery();
                             while(res2.next()){
-                                name = res2.getString(2);
-                                email = res2.getString(3);
+                                name = res2.getString(1);
+                                email = res2.getString(2);
                                 System.out.println("Friend's name is " + name + " and email is " + email);
                             }
                 }
