@@ -113,6 +113,7 @@ public class PittSocial{
                     topMessages();
                 }else if(input.equals("13")){
                     logout();
+                    System.exit(0);
                 }
             }
         }else{
@@ -526,7 +527,7 @@ public class PittSocial{
                     }
             }
             while(true){
-                PreparedStatement st2 = conn.prepareStatement("SELECT name, email FROM frofile where userid = ?");
+                PreparedStatement st2 = conn.prepareStatement("SELECT name, email FROM profile where userid = ?");
                 System.out.println("Please enter the ID of the user's profile you'd like to see: ");
                 Scanner scan = new Scanner(System.in);
                 int input = scan.nextInt();
@@ -664,16 +665,15 @@ public class PittSocial{
 
     private static void logout() throws ClassNotFoundException, SQLException
     {
-        Class.forName("org.postgresql.Driver");
-        String url = "jdbc:postgresql://localhost/postgres";
-        Properties props = new Properties();
-        props.setProperty("user", "postgres");
-        props.setProperty("password", password);
-        conn = DriverManager.getConnection(url, props);
+        //Class.forName("org.postgresql.Driver");
+        //String url = "jdbc:postgresql://localhost/postgres";
+        //Properties props = new Properties();
+        //props.setProperty("user", "postgres");
+        //props.setProperty("password", password);
+        //conn = DriverManager.getConnection(url, props);
         st = conn.createStatement();
-        String query = "UPDATE profile set lastlogin = CURRENT_TIMESTAMP where userID = " + String.valueOf(user_id) + ";";
-        st.executeQuery(query);
-        home();
+        String query = "UPDATE profile set lastlogin = CURRENT_TIMESTAMP where userID = " + user_id;
+        st.executeUpdate(query);
     }
 
     private static void dropUser()throws
