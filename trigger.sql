@@ -45,7 +45,7 @@ CREATE OR REPLACE FUNCTION sendMessage() RETURNS TRIGGER AS $$
     END;
     $$ language plpgsql;
 
-CREATE TRIGGER addMessageRecipient AFTER INSERT ON messages
+CREATE TRIGGER addMessageRecipient
+    AFTER INSERT ON messages
     FOR EACH ROW
     EXECUTE PROCEDURE sendMessage();
-
