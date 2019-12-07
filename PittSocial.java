@@ -326,7 +326,7 @@ public class PittSocial{
         //Connection conn = DriverManager.getConnection(url, props);
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        stmt = conn.prepareStatement("INSERT INTO message values (DEFALUT, " + user_id +", ?,?,NULL," + formatter.format(date)+ ")");
+        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFALUT, " + user_id +", ?,?,NULL," + formatter.format(date)+ ")");
         Scanner scanner = new Scanner(System. in);
         System.out.println("Please enter the message you want to send: ");
         String msg = scanner. nextLine();        
@@ -390,7 +390,7 @@ public class PittSocial{
         Scanner scanner = new Scanner(System.in);
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         Date date = new Date();
-        stmt = conn.prepareStatement("INSERT INTO message values (DEFALUT," + user_id +",?,NULL,?,"+ formatter.format(date)+ ")");
+        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFALUT," + user_id +",?,NULL,?,"+ formatter.format(date)+ ")");
         System.out.println("Please enter the message you want to send: ");
         String msg = scanner. nextLine();
         stmt.setString(1,msg);    
@@ -477,7 +477,7 @@ public class PittSocial{
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         date = res.getDate("lastlogin");
         //st = conn.createStatement();
-        query = "SLECT msgid, message from messages full outer join messagerecipient m on messages.msgid = m.msgid where timeSent >" + date + " or timeSent = " + date + " AND m.userid = " + user_id;
+        query = "SLECT msgid, message from messageInfo full outer join messagerecipient m on messageInfo.msgid = m.msgid where timeSent >" + date + " or timeSent = " + date + " AND m.userid = " + user_id;
         try{
             ResultSet res2 = st.executeQuery(query);
             int msgId;
@@ -659,8 +659,7 @@ public class PittSocial{
             System.out.println(user);
         }
         int messages = rs2.getInt(1);
-        System.out.println("Number of messages in the past " + numMessages + "months: ");
-        System.out.println(messages);
+        System.out.println("Number of messages in the past " + numMessages + "months: " + messages);
     }
 
     private static void logout() throws ClassNotFoundException, SQLException

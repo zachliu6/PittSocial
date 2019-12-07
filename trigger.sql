@@ -2,7 +2,7 @@ CREATE OR REPLACE FUNCTION wipeUser() RETURNS TRIGGER AS $$
     BEGIN
         DELETE FROM groupMember g WHERE g.userid = old.userid;
         DELETE FROM messagerecipient mr WHERE mr.userid = old.userid;
-        DELETE FROM messages m WHERE m.fromid IS NULL AND m.touserid IS NULL;
+        DELETE FROM messageInfo m WHERE m.fromid IS NULL AND m.touserid IS NULL;
     END
     $$;
 
@@ -31,7 +31,7 @@ CREATE OR REPLACE FUNCTION send_msg_to_groupmembers() RETURNS TRIGGER AS $$
     $$ language plpgsql;
 
 CREATE TRIGGER trig_send_message_to_group
-    AFTER insert ON messages
+    AFTER insert ON messageInfo
     FOR EACH ROW
     when ( new.touserid is null and new.togroupid is not null )
     EXECUTE PROCEDURE send_msg_to_groupmembers();
@@ -46,6 +46,6 @@ CREATE OR REPLACE FUNCTION sendMessage() RETURNS TRIGGER AS $$
     $$ language plpgsql;
 
 CREATE TRIGGER addMessageRecipient
-    AFTER INSERT ON messages
+    AFTER INSERT ON messageInfo
     FOR EACH ROW
     EXECUTE PROCEDURE sendMessage();

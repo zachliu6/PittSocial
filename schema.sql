@@ -29,7 +29,7 @@ create table pendingFriend(
     constraint pendingFriend_FK_2 foreign key (toID) references profile(userID)
 );
 
-CREATE TABLE messages(
+CREATE TABLE messageInfo(
     msgID SERIAL PRIMARY KEY,
     fromID integer,
     message varchar(200),
@@ -44,7 +44,7 @@ CREATE TABLE messageRecipient(
     msgID integer,
     userID integer,
     CONSTRAINT messageRecipient_pk primary key (msgID, userID),
-    CONSTRAINT messagesRecipient_fk foreign key (msgID) references messages(msgID),
+    CONSTRAINT messagesRecipient_fk foreign key (msgID) references messageInfo(msgID),
     CONSTRAINT messagesRecipient_fk_2 foreign key (userID) references profile(userID)
 );
 

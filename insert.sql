@@ -1,124 +1,51 @@
-INSERT INTO profile
-VALUES (100, 'Zach', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (101, 'Jason', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (102, 'Pete', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (103, 'Jake', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (104, 'Cole', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (105, 'Mike', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (106, 'Luke', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (107, 'Connor', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (108, 'Justin', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (109, 'Ross', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (110, 'Olivia', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (111, 'Riya', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (112, 'Arthur', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (113, 'Jared', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (114, 'Emily', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (115, 'catherine', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (116, 'Sabrina', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (117, 'Matt', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (118, 'Colin', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (119, 'John', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (120, 'Joseph', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (121, 'Cameron', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (122, 'Evan', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (123, 'Devon', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (124, 'Nate', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (125, 'Robbert', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (126, 'Ari', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (127, 'Ben', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (128, 'Jack', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (129, 'Owen', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (130, 'Nick', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (131, 'Gregory', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (132, 'Zack', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (133, 'Gabby', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (134, 'Ryan', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (135, 'Mackenzie', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO profile
-VALUES (136, 'Emma', '123@gmail.com', '123456', 4-6-1999, 11-7-2019);
-INSERT INTO friend
-VALUES ('Zach', 'Pete',11-1-2019, 'Hello');
-INSERT INTO friend
-VALUES ('Zach', 'Jake',11-1-2019, 'Hello');
-INSERT INTO friend
-VALUES ('Zach', 'Owen',11-1-2019, 'Hello');
-INSERT INTO friend
-VALUES ('Zach', 'Jack',11-1-2019, 'Hello');
-INSERT INTO friend
-VALUES ('Pete', 'Ari',11-1-2019, 'Hello');
-INSERT INTO friend
-VALUES ('Emily', 'Pete',11-1-2019, 'Hello');
-INSERT INTO friend
-VALUES ('Mackenzie', 'Pete',11-1-2019, 'Hello');
-INSERT INTO friend
-VALUES ('Cameron', 'Pete',11-1-2019, 'Hello');
-INSERT INTO friend
-VALUES ('Joesph', 'Pete',11-1-2019, 'Hello');
-INSERT INTO friend
-VALUES ('Connor', 'Pete',11-1-2019, 'Hello');
-INSERT INTO friend
-VALUES ('Jack', 'Pete',11-1-2019, 'Hello');
-INSERT INTO friend
-VALUES ('Owen', 'Pete',11-1-2019, 'Hello');
-INSERT INTO friend
-VALUES ('Emma', 'Pete',11-1-2019, 'Hello');
-INSERT into "group"
-values (1, 'Nordenberg', 20, 'pitt');
-INSERT into "group"
-values (2, 'Sutherland', 20, 'pitt');
-INSERT into "group"
-values (3, 'Holland', 20, 'pitt');
-INSERT into "group"
-values (4, 'Oakland', 20, 'pitt');
-INSERT into "group"
-values (5, 'Cathy', 20, 'pitt');
-INSERT into "group"
-values (6, 'Towers', 20, 'pitt');
-INSERT into "group"
-values (7, 'Panther Hall', 20, 'pitt');
-INSERT into messages
-values (10, 100, 'Hello', NULL, 10-31-2019);
-INSERT into messages
-values (11, 101, 'Hello', NULL, 10-31-2019);
-INSERT into messages
-values (12, 102, 'Hello', NULL, 10-31-2019);
-INSERT into messages
-values (13, 103, 'Hello', NULL, 10-31-2019);
-INSERT into messages 
-values (14, 104, 'HI', NULL, 10-31-2019);
+insert into profile (userID, name, email, password, date_of_birth, lastlogin) values (1, 'Shenoda', 'shg@pitt.edu', 'shpwd', '1997-10-13', '2019-10-09 15:00:00');
+insert into profile (userID, name, email, password, date_of_birth, lastlogin) values (2, 'Lory', 'lra@pitt.edu', 'lpwd', '1996-03-08', '2019-10-09 16:00:00');
+insert into profile (userID, name, email, password, date_of_birth, lastlogin) values (3, 'Peter', 'pdj@pitt.edu', 'ppwd', '1994-01-09', '2019-10-10 15:00:00');
+insert into profile (userID, name, email, password, date_of_birth, lastlogin) values (4, 'Alexandrie', 'alx@pitt.edu', 'apwd', '1995-08-21', '2019-10-10 16:00:00');
+insert into profile (userID, name, email, password, date_of_birth, lastlogin) values (5, 'Panickos', 'pnk@pitt.edu', 'kpwd', '1997-09-08', '2019-10-11 15:00:00');
+insert into profile (userID, name, email, password, date_of_birth, lastlogin) values (6, 'Socratis', 'soc@pitt.edu', 'spwd', '1991-05-17', '2019-10-11 16:00:00');
+insert into profile (userID, name, email, password, date_of_birth, lastlogin) values (7, 'Yaw', 'yaw@pitt.edu', 'ypwd', '1997-02-27', '2019-10-12 15:00:00');
+
+insert into friend (userID1, userID2, JDate, message) values (1,2, '2019-01-06', 'Hey, it is me  Shenoda!' );
+insert into friend (userID1, userID2, JDate, message) values (1,5, '2019-01-15', 'Hey, it is me  Shenoda!');
+insert into friend (userID1, userID2, JDate, message) values (2,3, '2019-08-23', 'Hey, it is me  Lory!');
+insert into friend (userID1, userID2, JDate, message) values (2,4, '2019-02-17', 'Hey, it is me  Lory!');
+insert into friend (userID1, userID2, JDate, message) values (3,4, '2019-09-16', 'Hey, it is me  Peter!');
+insert into friend (userID1, userID2, JDate, message) values (4,6, '2019-10-06', 'Hey, it is me  Alexandrie!');
+insert into friend (userID1, userID2, JDate, message) values (6,7, '2019-09-13', 'Hey, it is me  Socratis!');
+
+insert into pendingFriend (fromID, toID, message) values (7,4, 'Hey, it is me Yaw');
+insert into pendingFriend (fromID, toID, message) values (5,2, 'Hey, it is me Panickos');
+insert into pendingFriend (fromID, toID, message) values (2,6, 'Hey, it is me Lory');
+
+insert into groupInfo (gID, name, size, description) values (1, 'Grads at CS', 100, 'list of all graduate students');
+insert into groupInfo (gID, name, size, description) values (2, 'DB Group', 10, 'members of the ADMT Lab');
+
+insert into groupMember (gID, userID, role) values (1,1, 'manager');
+insert into groupMember (gID, userID, role) values (1,2, 'member');
+insert into groupMember (gID, userID, role) values (1,3, 'member');
+insert into groupMember (gID, userID, role) values (1,4, 'member');
+insert into groupMember (gID, userID, role) values (1,5, 'member');
+insert into groupMember (gID, userID, role) values (1,6, 'member');
+insert into groupMember (gID, userID, role) values (1,7, 'member');
+insert into groupMember (gID, userID, role) values (2,1, 'manager');
+insert into groupMember (gID, userID, role) values (2,2, 'member');
+insert into groupMember (gID, userID, role) values (2,5, 'member');
+
+insert into messageInfo (msgID, fromID, message, ToUserID, ToGroupID, timeSent) values (1,1, 'Are we meeting tomorrow for the project?', 2, NULL, '2019-12-01 15:00:00');
+insert into messageInfo (msgID, fromID, message, ToUserID, ToGroupID, timeSent) values (2,1, 'Peters pub tomorrow?', 5, NULL, '2019-11-01 16:00:00');
+insert into messageInfo (msgID, fromID, message, ToUserID, ToGroupID, timeSent) values (3,2, 'Please join our DB Group forum tomorrow', NULL, 1, '2019-10-10 15:00:00');
+insert into messageInfo (msgID, fromID, message, ToUserID, ToGroupID, timeSent) values (4,5, 'Here is the paper I will present tomorrow', NULL, 2, '2019-10-10 16:00:00');
+
+insert into messageRecipient (msgID, userID) values (1,2);
+insert into messageRecipient (msgID, userID) values (2,5);
+insert into messageRecipient (msgID, userID) values (3,1);
+insert into messageRecipient (msgID, userID) values (3,2);
+insert into messageRecipient (msgID, userID) values (3,3);
+insert into messageRecipient (msgID, userID) values (3,4);
+insert into messageRecipient (msgID, userID) values (3,5);
+insert into messageRecipient (msgID, userID) values (3,6);
+insert into messageRecipient (msgID, userID) values (3,7);
+insert into messageRecipient (msgID, userID) values (4,1);
+insert into messageRecipient (msgID, userID) values (4,2);
+insert into messageRecipient (msgID, userID) values (4,5);
