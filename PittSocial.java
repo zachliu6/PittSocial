@@ -60,6 +60,7 @@ public class PittSocial{
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
         conn = DriverManager.getConnection(url, props);
+        conn.setAutoCommit(false);
         st = conn.createStatement();
         String query = "SELECT password, userID FROM profile where email = '" + email + "' AND password = '" + pwd + "'";
         ResultSet res = st.executeQuery(query);
@@ -139,6 +140,7 @@ public class PittSocial{
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
         conn = DriverManager.getConnection(url, props);
+        conn.setAutoCommit(false);
         stmt = conn.prepareStatement("INSERT INTO profile(name, email, password, date_of_birth) VALUES (?,?,?,?)");
         System.out.println("Enter your name");
         Scanner scanner = new Scanner(System.in);
@@ -161,8 +163,10 @@ public class PittSocial{
                 System.out.println("SQL Code = "+ e1.getErrorCode());
                 e1 = e1.getNextException();
             }
+            conn.rollback();
             return;
         }
+        conn.commit();
         System.out.println("Account Created");
         login();
     }
@@ -174,6 +178,7 @@ public class PittSocial{
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
         conn = DriverManager.getConnection(url, props);
+        conn.setAutoCommit(false);
         st = conn.createStatement();
         String query = "SELECT name FROM profile WHERE userID = " + friendID;
         ResultSet res = st.executeQuery(query);
@@ -188,10 +193,11 @@ public class PittSocial{
                 stmt.execute();
             }catch (SQLException e1) {
                 System.out.println("Friend request already pending");
-                conn.close();
+                conn.rollback();
                 return;
             }
         }else{
+            conn.commit();
             System.out.println("User does not exist");
             conn.close();
         }
@@ -204,6 +210,7 @@ public class PittSocial{
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
         conn = DriverManager.getConnection(url, props);
+        conn.setAutoCommit(false);
         stmt = conn.prepareStatement("INSERT INTO groupInfo(name, description, size) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
         System.out.println("Please enter a name for your group");
         Scanner scanner = new Scanner(System. in);
@@ -219,7 +226,6 @@ public class PittSocial{
             stmt.execute();
         }catch (SQLException e1) {
             System.out.println("Group with that name already exists");
-            conn.close();
             scanner.close();
             return;
         }
@@ -231,8 +237,9 @@ public class PittSocial{
             }
             else {
                 System.out.println("Creating group failed, no ID obtained.");
-                conn.close();
                 scanner.close();
+                conn.rollback();
+                conn.close();                
                 return;
             }
         }
@@ -242,10 +249,12 @@ public class PittSocial{
             stmt.execute();
         }catch (SQLException e1) {
             System.out.println("Failed to add to user as group manager");
+            conn.rollback();
             conn.close();
             scanner.close();
             return;
         }  
+        conn.commit();
         System.out.println("Group created");
     }
 
@@ -271,8 +280,10 @@ public class PittSocial{
     			stmt.execute();
     		}catch(SQLException e1){
     			System.out.println("SQL Error: Group request already pending");
+                conn.rollback();
     			return;
     		}
+            conn.commit();
     		System.out.println("Request sent to " + rs.getString(1) + " with message: " + input.substring(0, Math.min(input.length(), 200)));
     	}else{
     		System.out.println("No group with that ID");
@@ -280,7 +291,7 @@ public class PittSocial{
     	}
     }
     
-    private static void confirmRequests(Connection conn, Scanner scanner) throws SQLException{
+    private static void confirmRequests() throws SQLException{
     	System.out.println("==Friend Requests==");
     	stmt = conn.prepareStatement("SELECT name, message FROM (pendingfriend full outer join profile p on pendingfriend.fromid = p.userid) WHERE toid = " + user_id);
     	ResultSet res;
@@ -320,6 +331,7 @@ public class PittSocial{
     		System.out.println(i + ") " + gres.getString(1) + ": " + gres.getString(2));
     		i++;
     	}
+        conn.commit();
     }
     
     private static void sendMessageToUser()throws
@@ -360,6 +372,7 @@ public class PittSocial{
         }
         if(found != 1){
             System.out.println("The user you want to send a message to is not your frined, execution failed!");
+            conn.rollback();
             return;
         }
         query = "select name from profile where userid = " + id;
@@ -378,10 +391,12 @@ public class PittSocial{
                 e1 = e1.getNextException();
             }
             //conn.close();
+            conn.rollback();
             scanner.close();
             return;
         }
         scanner.close();
+        conn.commit();
         System.out.println("Message Sent!");
     }
 
@@ -413,6 +428,7 @@ public class PittSocial{
             }
         }
         if(found != 1){
+            conn.rollback();
             System.out.println("You are not in the group you are sending the message to, execution failed!");
             return;
         }
@@ -426,11 +442,13 @@ public class PittSocial{
                 System.out.println("SQL Code = "+ e1.getErrorCode());
                 e1 = e1.getNextException();
             }
+            conn.rollback();
             //conn.close();
             scanner.close();
             return;
         }
         scanner. close();
+        conn.commit();
         System.out.println("Message sent!");
     }
 
@@ -455,6 +473,7 @@ public class PittSocial{
                 System.out.println( "Message number " + msgId + ": " + msg);
             }
        }catch (SQLException e1) {
+            conn.rollback();
             System.out.println("SQL Error, Please try again!");
             while (e1 != null) {
                 System.out.println("Message = " + e1.getMessage());
@@ -465,6 +484,7 @@ public class PittSocial{
             return;
         } 
         System.out.println("   ==End==   ");
+        conn.commit();
     }
 
     private static void displayNewMessages()throws
@@ -494,6 +514,7 @@ public class PittSocial{
                 System.out.println( "Message number " + msgId + ": " + msg);
             }
        }catch (SQLException e1) {
+            //conn.rollback();
             System.out.println("SQL Error, Please try again!");
             while (e1 != null) {
                 System.out.println("Message = " + e1.getMessage());
@@ -503,6 +524,7 @@ public class PittSocial{
             }
             return;
         } 
+        conn.commit();
         System.out.println("    ==End==     ");
     }
 
@@ -537,13 +559,14 @@ public class PittSocial{
             return;
             }
         }
+        conn.commit();
         System.out.println("======End=======");
     }
 
     private static void displayFriends()throws
             SQLException, ClassNotFoundException{
-                Class.forName("org.postgresql.Driver");
-        String url = "jdbc:postgresql://localhost/postgres";
+          //      Class.forName("org.postgresql.Driver");
+        //String url = "jdbc:postgresql://localhost/postgres";
         //Properties props = new Properties();
         //props.setProperty("user", "postgres");
         //props.setProperty("password", password);
@@ -590,7 +613,8 @@ public class PittSocial{
                 System.out.println("SQL Code = "+ e1.getErrorCode());
                 e1 = e1.getNextException();
             }
-            conn.close();
+            conn.commit();
+            //conn.close();
             return;
         } 
     }
@@ -611,6 +635,7 @@ public class PittSocial{
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
         Connection conn = DriverManager.getConnection(url, props);
+        conn.setAutoCommit(false);
         st = conn.createStatement();
         String query = "SELECT * from friend where userID1 = " + String.valueOf(user_id) + ";";
         ResultSet rs1 = st.executeQuery(query);
@@ -682,6 +707,7 @@ public class PittSocial{
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
         conn = DriverManager.getConnection(url, props);
+        conn.setAutoCommit(false);
         st = conn.createStatement();
         String query = "SELECT fromID, COUNT(fromID) from messageInfo where toUserID = " + String.valueOf(user_id) +
                 " group by fromID order by count(fromID) desc limit " + numUsers + ";";
@@ -697,6 +723,7 @@ public class PittSocial{
         ResultSet rs2 = st.executeQuery(query1);
         String messages = rs2.getString(3);
         System.out.println("Number of messages in the past " + numMonths + "months: " + messages);
+        conn.commit();
 
     }
 
@@ -711,6 +738,7 @@ public class PittSocial{
         st = conn.createStatement();
         String query = "UPDATE profile set lastlogin = CURRENT_TIMESTAMP where userID = " + user_id;
         st.executeUpdate(query);
+        conn.commit();
     }
 
     private static void dropUser()throws
@@ -721,11 +749,24 @@ public class PittSocial{
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
         conn = DriverManager.getConnection(url, props);
+        conn.setAutoCommit(false);
         st = conn.createStatement();
         String query = "DELETE FROM profile where userID = " + String.valueOf(user_id) + ";";
         String query1 = "DELETE FROM groupMember where userID = " + String.valueOf(user_id) + ";";
         String query2 = "DELETE FROM messageInfo where fromID = " + String.valueOf(user_id) + " or toUserID = " + String.valueOf(user_id) + ";";
-        st.executeQuery(query1);
+        try{
+         st.executeQuery(query1);
+        }catch (SQLException e1){
+                System.out.println("SQL Error, Please try again!");
+                while (e1 != null) {
+                    System.out.println("Message = " + e1.getMessage());
+                    System.out.println("SQLState = "+ e1.getSQLState());
+                    System.out.println("SQL Code = "+ e1.getErrorCode());
+                    e1 = e1.getNextException();
+                }
+                conn.rollback();
+            return;
+         }
         st.executeQuery(query2);
         logout();
     }
@@ -738,9 +779,22 @@ public class PittSocial{
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
         conn = DriverManager.getConnection(url, props);
+        conn.setAutoCommit(false);
         st = conn.createStatement();
         String query = "UPDATE profile set lastlogin = CURRENT_TIMESTAMP where userID = " + String.valueOf(user_id) + ";";
+        try{
         st.executeQuery(query);
+        }catch (SQLException e1){
+                System.out.println("SQL Error, Please try again!");
+                while (e1 != null) {
+                    System.out.println("Message = " + e1.getMessage());
+                    System.out.println("SQLState = "+ e1.getSQLState());
+                    System.out.println("SQL Code = "+ e1.getErrorCode());
+                    e1 = e1.getNextException();
+                }
+                conn.rollback();
+            return;
+            }
         System.exit(0);
     }
 
