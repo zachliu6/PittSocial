@@ -50,4 +50,3 @@ CREATE TRIGGER addMessageRecipient
     FOR EACH ROW
     EXECUTE PROCEDURE sendMessage();
 
-
