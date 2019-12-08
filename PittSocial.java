@@ -8,11 +8,7 @@ import java.util.*;
 
 public class PittSocial{
     public static int user_id; // global variable so there's no need to search for user's ID everytime
-<<<<<<< HEAD
-    public static final String password = "postgres";
-=======
-    public static final String password = "password";
->>>>>>> 26517b0a6557fe8abb38f19eebd8b1d18dabbb71
+    public static final String password = "19990406";
     public static Connection conn;
     public static Statement st;
     public static PreparedStatement stmt;
