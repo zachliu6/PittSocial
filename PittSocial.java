@@ -511,7 +511,7 @@ public class PittSocial{
             }
             return;
         }
-        System.out.println("   ==End==   ");
+        System.out.println("    ==End==    ");
         conn.commit();
     }
 
