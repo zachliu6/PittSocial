@@ -50,6 +50,4 @@ CREATE TRIGGER addMessageRecipient
     FOR EACH ROW
     EXECUTE PROCEDURE sendMessage();
 
-select name, email from profile
-where name like '%e%'
 
