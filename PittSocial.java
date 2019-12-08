@@ -116,15 +116,21 @@ public class PittSocial{
                     String id = scanner. nextLine();
                     sendMessageToUser(msg, id);
                 }else if(input.equals("6")){
-                    sendMessageToGroup();
+                    System.out.println("Please enter the message you want to send: ");
+                    String msg = scanner.nextLine();
+                    System.out.println("Please enter the ID of the group you are sending message to: ");
+                    String id = scanner.nextLine();
+                    sendMessageToGroup(msg, id);
                 }else if(input.equals("7")){
                     displayMessages();
                 }else if(input.equals("8")){
                     displayNewMessages();
                 }else if(input.equals("9")){
-                    displayFriends();
+                    displayFriends(-1);
                 }else if(input.equals("10")){
-                    searchForUser();
+                    System.out.println("Please enter the name/email of the user you are seaching for: ");
+                    String str = scan.nextLine();
+                    searchForUser(str);
                 }else if(input.equals("11")){
                     threeDegrees();
                 }else if(input.equals("12")){
@@ -394,7 +400,7 @@ public class PittSocial{
         System.out.println("Message Sent!");
     }
 
-    private static void sendMessageToGroup()throws 
+    private static void sendMessageToGroup(String msg, int id)throws
             SQLException, ClassNotFoundException{
         //Class.forName("org.postgresql.Driver");
         //String url = "jdbc:postgresql://localhost/postgres";
@@ -405,13 +411,7 @@ public class PittSocial{
         Scanner scanner = new Scanner(System.in);
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         Date date = new Date();
-        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFALUT," + user_id +",?,NULL,?,"+ formatter.format(date)+ ")");
-        System.out.println("Please enter the message you want to send: ");
-        String msg = scanner. nextLine();
-        stmt.setString(1,msg);    
-        System.out.println("Please enter the ID of the group you are sending message to: ");
-        String id = scanner. nextLine();
-        stmt.setString(2,id);
+        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFALUT," + user_id +"," + msg + ",NULL," + id + ","+ formatter.format(date)+ ")");
         int found = 0;
         String query = "select userid from groupmember where gid = " + id;
         Statement st2 = conn.createStatement();
@@ -522,12 +522,9 @@ public class PittSocial{
         System.out.println("    ==End==     ");
     }
 
-    private static void searchForUser() throws
+    private static void searchForUser(String str) throws
             SQLException, ClassNotFoundException{
                 st = conn.createStatement();
-        System.out.println("Please enter the name/email of the user you are seaching for: ");
-        Scanner scan = new Scanner(System.in);
-        String str = scan.nextLine();
         String[] splitStr = str.split("\\s+");
                 System.out.println("===Here are the users found:===");
         for(int i=0; i<splitStr.length; i++){
@@ -557,7 +554,7 @@ public class PittSocial{
         System.out.println("======End=======");
     }
 
-    private static void displayFriends()throws
+    private static void displayFriends(int id)throws
             SQLException, ClassNotFoundException{
           //      Class.forName("org.postgresql.Driver");
         //String url = "jdbc:postgresql://localhost/postgres";
@@ -583,14 +580,17 @@ public class PittSocial{
                     }
             }
             while(true){
-                PreparedStatement st2 = conn.prepareStatement("SELECT name, email FROM profile where userid = ?");
-                System.out.println("Please enter the ID of the user's profile you'd like to see(enter 0 to exit): ");
-                Scanner scan = new Scanner(System.in);
-                int input = scan.nextInt();
-                if(input==0){
+                if(id == -1)
+                {
+                    System.out.println("Please enter the ID of the user's profile you'd like to see(enter 0 to exit): ");
+                    Scanner scan = new Scanner(System.in);
+                    id = scan.nextInt();
+                }
+                PreparedStatement st2 = conn.prepareStatement("SELECT name, email FROM profile where userid = " + id);
+
+                if(id==0){
                     return;
                 }else{
-                            st2.setInt(1,input);
                             ResultSet res2 = st2.executeQuery();
                             while(res2.next()){
                                 name = res2.getString(1);
