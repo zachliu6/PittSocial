@@ -73,7 +73,8 @@ public class PittSocial{
             st = conn.createStatement();
             String query = "SELECT password, userID FROM profile where email = '" + email + "' AND password = '" + pwd + "'";
             ResultSet res = st.executeQuery(query);
-            if (res.next() && driver == -1) {
+            if (  driver == -1) {
+                res.next();
                 user_id = res.getInt(2);
                 while (1 == 1) {
                     System.out.println(" WELCOME !");
@@ -116,16 +117,10 @@ public class PittSocial{
                         System.out.println("Enter a message for your group request");
                         String message = scanner.nextLine();
                         initiateAddingGroup(gid, message);
-<<<<<<< HEAD
                     }//else if(input.equals("4")){
                     // confirmRequests();
                     //}
                     else if (input.equals("5")) {
-=======
-                    }else if(input.equals("4")){
-                        confirmRequests(-1,-1);
-                    }else if(input.equals("5")){
->>>>>>> 26517b0a6557fe8abb38f19eebd8b1d18dabbb71
                         System.out.println("Please enter the message you want to send: ");
                         String msg = scanner.nextLine();
                         System.out.println("Please enter the iD of the user you are sending message to: ");
@@ -161,7 +156,8 @@ public class PittSocial{
                         System.exit(0);
                     }
                 }
-            } else if (res.next() && driver == 1) {
+            } else if ( driver == 1) {
+                res.next();
                 user_id = res.getInt(2);
             } else {
                 System.out.println("Password not matched, sorry");
@@ -184,7 +180,7 @@ public class PittSocial{
         props.setProperty("password", password);
         conn = DriverManager.getConnection(url, props);
         conn.setAutoCommit(false);
-        stmt = conn.prepareStatement("INSERT INTO profile(userID, name, email, password, date_of_birth) VALUES (DEFAULT," + name + "," + email + "," + pwd + "," + date + ")");
+        stmt = conn.prepareStatement("INSERT INTO profile(userID, name, email, password, date_of_birth) VALUES (DEFAULT,'" + name + "','" + email + "','" + pwd + "','" + date + "')");
         try{
             stmt.execute();
         }catch (SQLException e1) {
@@ -215,7 +211,7 @@ public class PittSocial{
         String query = "SELECT name FROM profile WHERE userID = " + friendID;
         ResultSet res = st.executeQuery(query);
         if(res.next()){
-            stmt = conn.prepareStatement("INSERT INTO pendingFriend(fromID, toID, message) VALUES (" + user_id + ", " + friendID + ", " + message + ")");
+            stmt = conn.prepareStatement("INSERT INTO pendingFriend(fromID, toID, message) VALUES ('" + user_id + "','" + friendID + "','" + message + "')");
             try{
                 stmt.execute();
             }catch (SQLException e1) {
@@ -228,7 +224,7 @@ public class PittSocial{
         }else{
             conn.rollback();
             System.out.println("User does not exist");
-            conn.close();
+            //conn.close();
         }
     }
 
@@ -239,12 +235,19 @@ public class PittSocial{
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
         conn = DriverManager.getConnection(url, props);
-        stmt = conn.prepareStatement("INSERT INTO groupInfo(gid, name, size, description) VALUES (DEFAULT," + name + ", " + maxSize + ", " + description + ")", Statement.RETURN_GENERATED_KEYS);
+        String query = "INSERT INTO groupInfo(gid, name, size, description) VALUES (DEFAULT,'" + name + "', '" + maxSize + "', '" + description + "')";
+        st = conn.createStatement();
         conn.setAutoCommit(false);
         try{
-            stmt.execute();
+            st.execute(query);
         }catch (SQLException e1) {
-            System.out.println("Group with that name already exists");
+         System.out.println("SQL Error, sending failed!");
+            while (e1 != null) {
+                System.out.println("Message = " + e1.getMessage());
+                System.out.println("SQLState = "+ e1.getSQLState());
+                System.out.println("SQL Code = "+ e1.getErrorCode());
+                e1 = e1.getNextException();
+            }
             //scanner.close();
             conn.rollback();
             return;
@@ -259,18 +262,18 @@ public class PittSocial{
                 System.out.println("Creating group failed, no ID obtained.");
                 //scanner.close();
                 conn.rollback();
-                conn.close();
+                //conn.close();
                 return;
             }
         }
         //add the current user as a manager
-        stmt = conn.prepareStatement("INSERT INTO groupmember VALUES(" + gid + ", " + user_id + ", 'manager')");
+        stmt = conn.prepareStatement("INSERT INTO groupmember VALUES('" + gid + "', '" + user_id + "', 'manager')");
         try{
             stmt.execute();
         }catch (SQLException e1) {
             System.out.println("Failed to add to user as group manager");
             conn.rollback();
-            conn.close();
+            //conn.close();
             //scanner.close();
             return;
         }
@@ -290,7 +293,7 @@ public class PittSocial{
         }
         if(rs.next()){
             System.out.println("Enter a message for your group request");
-            stmt = conn.prepareStatement("INSERT INTO pendingGroupMember VALUES(" + gid + ", " + user_id + ", " + message + ")");
+            stmt = conn.prepareStatement("INSERT INTO pendingGroupMember VALUES('" + gid + "', '" + user_id + "','" + message + "')");
             try{
                 stmt.execute();
             }catch(SQLException e1){
@@ -312,7 +315,7 @@ public class PittSocial{
     /*
     public static void confirmRequests(int driver, int driverSelect) throws SQLException{
         System.out.println("==Friend Requests==");
-        stmt = conn.prepareStatement("SELECT name, message, fromid FROM (pendingfriend full outer join profile p on pendingfriend.fromid = p.userid) WHERE toid = " + user_id, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        stmt = conn.prepareStatement("SELECT name, message FROM (pendingfriend full outer join profile p on pendingfriend.fromid = p.userid) WHERE toid = " + user_id);
         ResultSet res;
         try{
             res = stmt.executeQuery();
@@ -332,7 +335,7 @@ public class PittSocial{
             i++;
         }
         System.out.println("==Group Requests==");
-        stmt = conn.prepareStatement("SELECT name, message, pg.userid, gid FROM pendinggroupmember pg natural join (SELECT gid FROM groupmember WHERE role = 'manager' AND userid = " + user_id + ") AS pgg natural join profile", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        stmt = conn.prepareStatement("SELECT name, message FROM pendinggroupmember pg natural join (SELECT gid FROM groupmember WHERE role = 'manager' AND userid = " + user_id + ") AS pgg natural join profile");
         ResultSet gres;
         try{
             gres = stmt.executeQuery();
@@ -352,49 +355,25 @@ public class PittSocial{
         }
         conn.commit();
         int req = -2;
-    	Queue<Integer> ls = new LinkedList<Integer>();
+        Queue<Integer> ls = new LinkedList<Integer>();
         if(driver == 1){
-        	req = driverSelect;
-        	if(req > 0){
-        		ls.add(req);
-        	}
+            req = driverSelect;
+            if(req > 0){
+                ls.add(req);
+            }
         }else{
-    		System.out.println("Enter the number of the request to accept, enter 0 to accept all, or enter -1 to exit and reject all remaining requests");
-    		Scanner in = new Scanner(System.in);
-    		req = in.nextInt();
-        	while(req > 0){
-        		if(!ls.contains(req)){ls.add(req);}
-        		System.out.println("Enter another request to accept, enter 0 to accept all, or enter -1 to exit and reject all remaining requests");
-        		req = in.nextInt();
-        	}
+            System.out.println("Enter the number of the request to accept, enter 0 to accept all, or enter -1 to exit and reject all remaining requests");
+            Scanner in = new Scanner(System.in);
+            req = in.nextInt();
+            while(req > 0){
+                ls.add(req);
+                System.out.println("Enter another request to accept, enter 0 to accept all, or enter -1 to exit and reject all remaining requests");
+                req = in.nextInt();
+            }
         }
         if(req == 0){
-        	//accept all friend requests
-        	System.out.println("Accepting all requests");
-        	res.beforeFirst();
-        	while(res.next()){
-        		//System.out.println("adding friend");
-        		stmt = conn.prepareStatement("INSERT INTO friend VALUES (" + user_id + ", " + res.getInt(3) + ", NOW(), '" + res.getString(2)+ "')");
-        		stmt.execute();
-        		//System.out.println("Friend Added");
-        	}
-        	System.out.println("Deleting requests");
-        	stmt = conn.prepareStatement("DELETE FROM pendingFriend WHERE toid = " + user_id);
-        	stmt.execute();
-        	//accept all group requests
-        	gres.beforeFirst();
-        	while(res.next()){
-        		//System.out.println("adding friend");
-        		stmt = conn.prepareStatement("INSERT INTO groupMember VALUES (" + gres.getInt(4) + ", " + gres.getInt(3) + ", 'member')");
-        		stmt.execute();
-        		//System.out.println("Friend Added");
-        	}
-        }else{
-        	
         }
     }
-
-
      */
 
     public static void sendMessageToUser(String msg, int id)throws
@@ -407,7 +386,7 @@ public class PittSocial{
         //Connection conn = DriverManager.getConnection(url, props);
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFAULT, " + user_id +", " + msg + ", " + id + ",NULL," + formatter.format(date)+ ")");
+        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFAULT, " + user_id +",'" + msg + "'," + id + ",NULL,'" + formatter.format(date)+ "')");
         int found = 0;
         String query = "select * from friend f where f.userid1 = " + user_id;
         Statement st2 = conn.createStatement();
@@ -466,7 +445,7 @@ public class PittSocial{
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         Date date = new Date();
-        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFAULT," + user_id +"," + msg + ",NULL," + id + ","+ formatter.format(date)+ ")");
+        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFAULT," + user_id +",'" + msg + "',NULL," + id + ",'"+ formatter.format(date)+ "')");
         int found = 0;
         String query = "select userid from groupmember where gid = " + id;
         Statement st2 = conn.createStatement();
@@ -550,6 +529,10 @@ public class PittSocial{
         ResultSet res = st.executeQuery(query);
         Date date;
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        if(!res.next()){
+            System.out.println("No Last login yet, try next time!");
+            return;
+        }
         date = res.getDate("lastlogin");
         //st = conn.createStatement();
         query = "SELECT msgid, message from messageInfo full outer join messagerecipient m on messageInfo.msgid = m.msgid where timeSent >" + date + " or timeSent = " + date + " AND m.userid = " + user_id;
@@ -652,6 +635,8 @@ public class PittSocial{
                         email = res2.getString(2);
                         System.out.println("Friend's name is " + name + " and email is " + email);
                     }
+                    System.out.println("END");
+                    return ;
                 }
             }
         }catch (SQLException e1) {
@@ -834,9 +819,9 @@ public class PittSocial{
         conn = DriverManager.getConnection(url, props);
         conn.setAutoCommit(false);
         st = conn.createStatement();
-        String query = "UPDATE profile set lastlogin = CURRENT_TIMESTAMP where userID = " + String.valueOf(user_id) + ";";
+        String query = "UPDATE profile set lastlogin = CURRENT_TIMESTAMP where userID = " + user_id ;
         try{
-            st.executeQuery(query);
+            st.executeUpdate(query);
         }catch (SQLException e1){
             System.out.println("SQL Error, Please try again!");
             while (e1 != null) {
