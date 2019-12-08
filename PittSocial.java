@@ -8,7 +8,7 @@ import java.util.*;
 
 public class PittSocial{
     public static int user_id; // global variable so there's no need to search for user's ID everytime
-    public static final String password = "postgres";
+    public static final String password = "19990406";
     public static Connection conn;
     public static Statement st;
     public static PreparedStatement stmt;
@@ -164,7 +164,7 @@ public class PittSocial{
         props.setProperty("password", password);
         conn = DriverManager.getConnection(url, props);
         conn.setAutoCommit(false);
-        stmt = conn.prepareStatement("INSERT INTO profile(name, email, password, date_of_birth) VALUES (?,?,?,?)");
+        stmt = conn.prepareStatement("INSERT INTO profile(userID, name, email, password, date_of_birth) VALUES (DEFAULT,?,?,?,?)");
         System.out.println("Enter your name");
         Scanner scanner = new Scanner(System.in);
         stmt.setString(1, scanner.nextLine());
@@ -179,7 +179,7 @@ public class PittSocial{
         try{
             stmt.execute();
         }catch (SQLException e1) {
-            System.out.println("SQL Error retreiving friend requests");
+            System.out.println("SQL Error, try again!");
             while (e1 != null) {
                 System.out.println("Message = " + e1.getMessage());
                 System.out.println("SQLState = "+ e1.getSQLState());
@@ -351,7 +351,7 @@ public class PittSocial{
         //Connection conn = DriverManager.getConnection(url, props);
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFALUT, " + user_id +", " + msg + ", " + id + ",NULL," + formatter.format(date)+ ")");
+        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFAULT, " + user_id +", " + msg + ", " + id + ",NULL," + formatter.format(date)+ ")");
         int found = 0;
         String query = "select * from friend f where f.userid1 = " + user_id;
         Statement st2 = conn.createStatement();
@@ -410,7 +410,7 @@ public class PittSocial{
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         Date date = new Date();
-        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFALUT," + user_id +"," + msg + ",NULL," + id + ","+ formatter.format(date)+ ")");
+        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFAULT," + user_id +"," + msg + ",NULL," + id + ","+ formatter.format(date)+ ")");
         int found = 0;
         String query = "select userid from groupmember where gid = " + id;
         Statement st2 = conn.createStatement();
