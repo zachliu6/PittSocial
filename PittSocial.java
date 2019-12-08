@@ -7,11 +7,11 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class PittSocial{
-        public static int user_id; // global variable so there's no need to search for user's ID everytime
-        public static final String password = "postgres";
-        public static Connection conn;
-        public static Statement st;
-        public static PreparedStatement stmt;
+    public static int user_id; // global variable so there's no need to search for user's ID everytime
+    public static final String password = "postgres";
+    public static Connection conn;
+    public static Statement st;
+    public static PreparedStatement stmt;
 
     public static void main(String args[]) throws
             SQLException, ClassNotFoundException {
@@ -24,15 +24,15 @@ public class PittSocial{
     }
 
     private static void home() throws ClassNotFoundException, SQLException{
-    while(true){
-        System.out.println("=========================WELCOME TO PITT SOCIAL=========================");
-        System.out.println("Here's is the menu, please enter the number of the service you are looking for:");
-        System.out.println("1. Login");
-        System.out.println("2. Don't have an account? Create one");
-        System.out.println("3. Exit");
-        System.out.println("========================================================================");
-        Scanner scanner = new Scanner(System. in);
-        String input = scanner. nextLine();
+        while(true){
+            System.out.println("=========================WELCOME TO PITT SOCIAL=========================");
+            System.out.println("Here's is the menu, please enter the number of the service you are looking for:");
+            System.out.println("1. Login");
+            System.out.println("2. Don't have an account? Create one");
+            System.out.println("3. Exit");
+            System.out.println("========================================================================");
+            Scanner scanner = new Scanner(System. in);
+            String input = scanner. nextLine();
             if(input.equals("1")){
                 login();
             }else if(input.equals("2")){
@@ -43,112 +43,121 @@ public class PittSocial{
             }else{
                 System.out.println("invalid input!");
             }
-    }
+        }
     }
 
     private static void login()throws
             SQLException, ClassNotFoundException{
         while(true){
-        System.out.println("////// Please enter your email: //////");
-        Scanner scanner = new Scanner(System. in);
-        String email = scanner.nextLine();
-        System.out.println("////// Please enter your password: //////");
-        String pwd = scanner.nextLine();
-        Class.forName("org.postgresql.Driver");
-        String url = "jdbc:postgresql://localhost/postgres";
-        Properties props = new Properties();
-        props.setProperty("user", "postgres");
-        props.setProperty("password", password);
-        conn = DriverManager.getConnection(url, props);
-        conn.setAutoCommit(false);
-        st = conn.createStatement();
-        String query = "SELECT password, userID FROM profile where email = '" + email + "' AND password = '" + pwd + "'";
-        ResultSet res = st.executeQuery(query);
-        if(res.next()){
-            user_id = res.getInt(2);    
-            while(1 == 1){
-                System.out.println(" WELCOME !");
-                System.out.println("========================================================================");
-                System.out.println("Here is the menu, please enter the number of the service you are looking for:");
-                System.out.println("1. Send friend request.");
-                System.out.println("2. Create group.");
-                System.out.println("3. Send group join request. ");
-                System.out.println("4. Check pending frend requests. ");
-                System.out.println("5. Send message to a user. ");
-                System.out.println("6. Send message to a group " );
-                System.out.println("7. Check received messages ");
-                System.out.println("8. Check the newest received messages. ");
-                System.out.println("9. List current freinds. ");
-                System.out.println("10. Search for a friend. ");
-                System.out.println("11. Search for three Degress. ");
-                System.out.println("12. List the messages in the past months. ");
-                System.out.println("13. Log out. ");
-                System.out.println("========================================================================");
-                scanner = new Scanner(System. in);
-                String input = scanner.nextLine();
-                if(input.equals("1")){
-                    System.out.println("Enter the ID of the user you would like to send a request to");
-                    inputID = scanner.nextLine();
-                    System.out.println("Please enter a message for your friend request to " + inputID + " (200 char max)");
-                    String inputMessage = scanner.nextLine();
-                    inputMessage = inputMessage.substring(0, Math.min(input.length(), 200));//shortens message if more than 200 chars
-                    initiateFriendship(Integer.parseInt(inputID), inputMessage);
-                }else if(input.equals("2")){
-                    System.out.println("Please enter a name for your group");
-                    String name = scanner.nextLine();
-                    System.out.println("Enter a description for your group");
-                    String description = scanner.nextLine();
-                    System.out.println("Enter a max size for your group");
-                    int maxSize = scanner.nextLine();
-                    createGroup(name, description, maxSize);
-                }else if(input.equals("3")){
-                	initiateAddingGroup();
-                    System.out.println("Please enter the gID of the group you would like to join");
-                    int gid = Integer.parseInt(scanner.nextLine());
-                    System.out.println("Enter a message for your group request");
-                    String message = scanner.nextLine();
-                	initiateAddingGroup( gid, message);
-                }else if(input.equals("4")){
-                	confirmRequests();
-                }else if(input.equals("5")){
-                    sendMessageToUser();
-                }else if(input.equals("6")){
-                    sendMessageToGroup();
-                }else if(input.equals("7")){
-                    displayMessages();
-                }else if(input.equals("8")){
-                    displayNewMessages();
-                }else if(input.equals("9")){
-                    displayFriends();
-                }else if(input.equals("10")){
-                    searchForUser();
-                }else if(input.equals("11")){
-                    threeDegrees();
-                }else if(input.equals("12")){
-                    Scanner scan = new Scanner(System.in);
-                    System.out.println("Please enter the number of top users you would like to display: ");
-                    int k = scan.nextInt();
-                    System.out.println("Please enter the number of past months you would like to display messages from: ");
-                    int x = scan.nextInt();
-                    topMessages(k, x);
-                }else if(input.equals("13")){
-                    logout();
+            System.out.println("////// Please enter your email: //////");
+            Scanner scanner = new Scanner(System. in);
+            String email = scanner.nextLine();
+            System.out.println("////// Please enter your password: //////");
+            String pwd = scanner.nextLine();
+            Class.forName("org.postgresql.Driver");
+            String url = "jdbc:postgresql://localhost/postgres";
+            Properties props = new Properties();
+            props.setProperty("user", "postgres");
+            props.setProperty("password", password);
+            conn = DriverManager.getConnection(url, props);
+            conn.setAutoCommit(false);
+            st = conn.createStatement();
+            String query = "SELECT password, userID FROM profile where email = '" + email + "' AND password = '" + pwd + "'";
+            ResultSet res = st.executeQuery(query);
+            if(res.next()){
+                user_id = res.getInt(2);
+                while(1 == 1){
+                    System.out.println(" WELCOME !");
+                    System.out.println("========================================================================");
+                    System.out.println("Here is the menu, please enter the number of the service you are looking for:");
+                    System.out.println("1. Send friend request.");
+                    System.out.println("2. Create group.");
+                    System.out.println("3. Send group join request. ");
+                    System.out.println("4. Check pending frend requests. ");
+                    System.out.println("5. Send message to a user. ");
+                    System.out.println("6. Send message to a group " );
+                    System.out.println("7. Check received messages ");
+                    System.out.println("8. Check the newest received messages. ");
+                    System.out.println("9. List current freinds. ");
+                    System.out.println("10. Search for a friend. ");
+                    System.out.println("11. Search for three Degress. ");
+                    System.out.println("12. List the messages in the past months. ");
+                    System.out.println("13. Log out. ");
+                    System.out.println("========================================================================");
+                    scanner = new Scanner(System. in);
+                    String input = scanner.nextLine();
+                    if(input.equals("1")){
+                        System.out.println("Enter the ID of the user you would like to send a request to");
+                        String inputID = scanner.nextLine();
+                        System.out.println("Please enter a message for your friend request to " + inputID + " (200 char max)");
+                        String inputMessage = scanner.nextLine();
+                        inputMessage = inputMessage.substring(0, Math.min(input.length(), 200));//shortens message if more than 200 chars
+                        initiateFriendship(Integer.parseInt(inputID), inputMessage);
+                    }else if(input.equals("2")){
+                        System.out.println("Please enter a name for your group");
+                        String name = scanner.nextLine();
+                        System.out.println("Enter a description for your group");
+                        String description = scanner.nextLine();
+                        System.out.println("Enter a max size for your group");
+                        int maxSize = scanner.nextInt();
+                        createGroup(name, description, maxSize);
+                    }else if(input.equals("3")){
+                        System.out.println("Please enter the gID of the group you would like to join");
+                        int gid = Integer.parseInt(scanner.nextLine());
+                        System.out.println("Enter a message for your group request");
+                        String message = scanner.nextLine();
+                        initiateAddingGroup(gid, message);
+                    }else if(input.equals("4")){
+                        confirmRequests();
+                    }else if(input.equals("5")){
+                        System.out.println("Please enter the message you want to send: ");
+                        String msg = scanner. nextLine();
+                        System.out.println("Please enter the iD of the user you are sending message to: ");
+                        String id = scanner. nextLine();
+                        sendMessageToUser(msg, id);
+                    }else if(input.equals("6")){
+                        System.out.println("Please enter the message you want to send: ");
+                        String msg = scanner.nextLine();
+                        System.out.println("Please enter the ID of the group you are sending message to: ");
+                        String id = scanner.nextLine();
+                        sendMessageToGroup(msg, id);
+                    }else if(input.equals("7")){
+                        displayMessages();
+                    }else if(input.equals("8")){
+                        displayNewMessages();
+                    }else if(input.equals("9")){
+                        displayFriends(-1);
+                    }else if(input.equals("10")){
+                        System.out.println("Please enter the name/email of the user you are seaching for: ");
+                        String str = scan.nextLine();
+                        searchForUser(str);
+                    }else if(input.equals("11")){
+                        threeDegrees();
+                    }else if(input.equals("12")){
+                        Scanner scan = new Scanner(System.in);
+                        System.out.println("Please enter the number of top users you would like to display: ");
+                        int k = scan.nextInt();
+                        System.out.println("Please enter the number of past months you would like to display messages from: ");
+                        int x = scan.nextInt();
+                        topMessages(k, x);
+                    }else if(input.equals("13")){
+                        logout();
+                        System.exit(0);
+                    }
+                }
+            }else{
+                System.out.println("Password not matched, sorry");
+                System.out.println("Do you want to log out? (Y/N)");
+                String response = scanner.nextLine();
+                if(response == "Y"){
                     System.exit(0);
                 }
             }
-        }else{
-            System.out.println("Password not matched, sorry");
-            System.out.println("Do you want to log out? (Y/N)");
-            String response = scanner.nextLine();
-            if(response == "Y"){
-                System.exit(0);
-            }
         }
-    }
     }
 
     private static void createUser() throws SQLException, ClassNotFoundException{
-    	Class.forName("org.postgresql.Driver");
+        Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
         props.setProperty("user", "postgres");
@@ -164,7 +173,7 @@ public class PittSocial{
         System.out.println("Enter a password");
         stmt.setString(3, scanner.nextLine());
         System.out.println("Enter your birtday in the format yyyy-MM-DD");
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-DD"); 
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-DD");
         java.sql.Date date = java.sql.Date.valueOf(scanner.nextLine());
         stmt.setDate(4, date);
         try{
@@ -219,27 +228,14 @@ public class PittSocial{
         props.setProperty("user", "postgres");
         props.setProperty("password", password);
         conn = DriverManager.getConnection(url, props);
-<<<<<<< HEAD
         stmt = conn.prepareStatement("INSERT INTO groupInfo(name, description, size) VALUES (" + name + ", " + description + ", " + maxSize + ")", Statement.RETURN_GENERATED_KEYS);
-=======
         conn.setAutoCommit(false);
-        stmt = conn.prepareStatement("INSERT INTO groupInfo(name, description, size) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-        System.out.println("Please enter a name for your group");
-        Scanner scanner = new Scanner(System. in);
-        String input = scanner.nextLine();
-        stmt.setString(1, input);
-        System.out.println("Enter a description for your group");
-        input = scanner.nextLine();
-        stmt.setString(2, input);
-        System.out.println("Enter a max size for your group");
-        input = scanner.nextLine();
-        stmt.setInt(3, Integer.parseInt(input));
->>>>>>> 32a5265d276e1f593c00f4065b8792382cadf04c
         try{
             stmt.execute();
         }catch (SQLException e1) {
             System.out.println("Group with that name already exists");
-            scanner.close();
+            //scanner.close();
+            conn.rollback();
             return;
         }
         //get the autogenerated gid of the new group
@@ -250,9 +246,9 @@ public class PittSocial{
             }
             else {
                 System.out.println("Creating group failed, no ID obtained.");
-                scanner.close();
+                //scanner.close();
                 conn.rollback();
-                conn.close();                
+                conn.close();
                 return;
             }
         }
@@ -264,50 +260,49 @@ public class PittSocial{
             System.out.println("Failed to add to user as group manager");
             conn.rollback();
             conn.close();
-            scanner.close();
+            //scanner.close();
             return;
-        }  
+        }
         conn.commit();
         System.out.println("Group created");
     }
 
-    private static void initiateAddingGroup(Connection conn, int gid, String message) throws SQLException{
-    	stmt = conn.prepareStatement("SELECT name FROM groupInfo WHERE gid = " + gid);
-    	ResultSet rs;
-    	try{
-    		rs = stmt.executeQuery();
-    	}catch(SQLException e){
-    		System.out.println("SQL Error: Failed to retreive group");
-    		scanner.close();
+    private static void initiateAddingGroup(int gid, String message) throws SQLException{
+        stmt = conn.prepareStatement("SELECT name FROM groupInfo WHERE gid = " + gid);
+        ResultSet rs;
+        try{
+            rs = stmt.executeQuery();
+        }catch(SQLException e){
+            System.out.println("SQL Error: Failed to retreive group");
+            //scanner.close();
             return;
-    	}
-    	if(rs.next()){
-    		System.out.println("Enter a message for your group request");
-    		stmt = conn.prepareStatement("INSERT INTO pendingGroupMember VALUES(" + gid + ", " + user_id + ", " + message + ")");
-    		try{
-    			stmt.execute();
-    		}catch(SQLException e1){
-    			System.out.println("SQL Error: Group request already pending");
+        }
+        if(rs.next()){
+            System.out.println("Enter a message for your group request");
+            stmt = conn.prepareStatement("INSERT INTO pendingGroupMember VALUES(" + gid + ", " + user_id + ", " + message + ")");
+            try{
+                stmt.execute();
+            }catch(SQLException e1){
+                System.out.println("SQL Error: Group request already pending");
                 conn.rollback();
-    			return;
-    		}
-<<<<<<< HEAD
-    		System.out.println("Request sent to " + rs.getString(1) + " with message: " + message.substring(0, Math.min(input.length(), 200)));
-=======
+                return;
+            }
+
+            System.out.println("Request sent to " + rs.getString(1) + " with message: " + message.substring(0, Math.min(message.length(), 200)));
+
             conn.commit();
-    		System.out.println("Request sent to " + rs.getString(1) + " with message: " + input.substring(0, Math.min(input.length(), 200)));
->>>>>>> 32a5265d276e1f593c00f4065b8792382cadf04c
-    	}else{
-    		System.out.println("No group with that ID");
-    		return;
-    	}
+
+        }else{
+            System.out.println("No group with that ID");
+            return;
+        }
     }
-    
+
     private static void confirmRequests() throws SQLException{
-    	System.out.println("==Friend Requests==");
-    	stmt = conn.prepareStatement("SELECT name, message FROM (pendingfriend full outer join profile p on pendingfriend.fromid = p.userid) WHERE toid = " + user_id);
-    	ResultSet res;
-    	try{
+        System.out.println("==Friend Requests==");
+        stmt = conn.prepareStatement("SELECT name, message FROM (pendingfriend full outer join profile p on pendingfriend.fromid = p.userid) WHERE toid = " + user_id);
+        ResultSet res;
+        try{
             res = stmt.executeQuery();
         }catch (SQLException e1) {
             System.out.println("SQL Error retreiving friend requests");
@@ -319,15 +314,15 @@ public class PittSocial{
             }
             return;
         }
-    	int i = 1;
-    	while(res.next()){
-    		System.out.println(i + ") " + res.getString(1) + ": " + res.getString(2));
-    		i++;
-    	}
-    	System.out.println("==Group Requests==");
-    	stmt = conn.prepareStatement("SELECT name, message FROM pendinggroupmember pg natural join (SELECT gid FROM groupmember WHERE role = 'manager' AND userid = " + user_id + ") AS pgg natural join profile"); 
-    	ResultSet gres;
-    	try{
+        int i = 1;
+        while(res.next()){
+            System.out.println(i + ") " + res.getString(1) + ": " + res.getString(2));
+            i++;
+        }
+        System.out.println("==Group Requests==");
+        stmt = conn.prepareStatement("SELECT name, message FROM pendinggroupmember pg natural join (SELECT gid FROM groupmember WHERE role = 'manager' AND userid = " + user_id + ") AS pgg natural join profile");
+        ResultSet gres;
+        try{
             gres = stmt.executeQuery();
         }catch (SQLException e1) {
             System.out.println("SQL Error retreiving group requests");
@@ -339,14 +334,14 @@ public class PittSocial{
             }
             return;
         }
-    	while(gres.next()){
-    		System.out.println(i + ") " + gres.getString(1) + ": " + gres.getString(2));
-    		i++;
-    	}
+        while(gres.next()){
+            System.out.println(i + ") " + gres.getString(1) + ": " + gres.getString(2));
+            i++;
+        }
         conn.commit();
     }
-    
-    private static void sendMessageToUser()throws
+
+    private static void sendMessageToUser(String msg, int id)throws
             SQLException, ClassNotFoundException{
         //Class.forName("org.postgresql.Driver");
         //String url = "jdbc:postgresql://localhost/postgres";
@@ -356,13 +351,7 @@ public class PittSocial{
         //Connection conn = DriverManager.getConnection(url, props);
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFALUT, " + user_id +", ?,?,NULL," + formatter.format(date)+ ")");
-        Scanner scanner = new Scanner(System. in);
-        System.out.println("Please enter the message you want to send: ");
-        String msg = scanner. nextLine();        
-        stmt.setString(1, msg);
-        System.out.println("Please enter the iD of the user you are sending message to: ");
-        String id = scanner. nextLine();        
+        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFALUT, " + user_id +", " + msg + ", " + id + ",NULL," + formatter.format(date)+ ")");
         int found = 0;
         String query = "select * from friend f where f.userid1 = " + user_id;
         Statement st2 = conn.createStatement();
@@ -374,8 +363,8 @@ public class PittSocial{
         }
         if(found != 1){
             query = "select * from friend f where f.userid2 = " + user_id;
-        st2 = conn.createStatement();
-        res = st2.executeQuery(query);
+            st2 = conn.createStatement();
+            res = st2.executeQuery(query);
         }
         while(res.next()){
             if(res.getString(1) == id){
@@ -391,7 +380,6 @@ public class PittSocial{
         st2 = conn.createStatement();
         res = st2.executeQuery(query);
         System.out.println("The user's name you want to send a message to is " + res.getString(1));
-        stmt.setString(2, id);
         try{
             stmt.execute();
         }catch (SQLException e1) {
@@ -412,7 +400,7 @@ public class PittSocial{
         System.out.println("Message Sent!");
     }
 
-    private static void sendMessageToGroup()throws 
+    private static void sendMessageToGroup(String msg, int id)throws
             SQLException, ClassNotFoundException{
         //Class.forName("org.postgresql.Driver");
         //String url = "jdbc:postgresql://localhost/postgres";
@@ -423,13 +411,7 @@ public class PittSocial{
         Scanner scanner = new Scanner(System.in);
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         Date date = new Date();
-        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFALUT," + user_id +",?,NULL,?,"+ formatter.format(date)+ ")");
-        System.out.println("Please enter the message you want to send: ");
-        String msg = scanner. nextLine();
-        stmt.setString(1,msg);    
-        System.out.println("Please enter the ID of the group you are sending message to: ");
-        String id = scanner. nextLine();
-        stmt.setString(2,id);
+        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFALUT," + user_id +"," + msg + ",NULL," + id + ","+ formatter.format(date)+ ")");
         int found = 0;
         String query = "select userid from groupmember where gid = " + id;
         Statement st2 = conn.createStatement();
@@ -445,7 +427,7 @@ public class PittSocial{
             return;
         }
         try{
-             stmt.execute();
+            stmt.execute();
         }catch (SQLException e1) {
             System.out.println("SQL Error, message sending failed!");
             while (e1 != null) {
@@ -464,7 +446,7 @@ public class PittSocial{
         System.out.println("Message sent!");
     }
 
-    private static void displayMessages()throws 
+    private static void displayMessages()throws
             SQLException, ClassNotFoundException{
         Class.forName("org.postgresql.Driver");
         //String url = "jdbc:postgresql://localhost/postgres";
@@ -484,7 +466,7 @@ public class PittSocial{
                 msg = res.getString(2);
                 System.out.println( "Message number " + msgId + ": " + msg);
             }
-       }catch (SQLException e1) {
+        }catch (SQLException e1) {
             conn.rollback();
             System.out.println("SQL Error, Please try again!");
             while (e1 != null) {
@@ -494,7 +476,7 @@ public class PittSocial{
                 e1 = e1.getNextException();
             }
             return;
-        } 
+        }
         System.out.println("   ==End==   ");
         conn.commit();
     }
@@ -506,7 +488,7 @@ public class PittSocial{
         //Properties props = new Properties();
         //props.setProperty("user", "postgres");
         //props.setProperty("password", password);
-        //conn = DriverManager.getConnection(url, props);        
+        //conn = DriverManager.getConnection(url, props);
         st = conn.createStatement();
         System.out.println("==New Messages==");
         String query = "SELECT lastlogin FROM profile where userid = " + user_id;
@@ -525,7 +507,7 @@ public class PittSocial{
                 msg = res2.getString(2);
                 System.out.println( "Message number " + msgId + ": " + msg);
             }
-       }catch (SQLException e1) {
+        }catch (SQLException e1) {
             //conn.rollback();
             System.out.println("SQL Error, Please try again!");
             while (e1 != null) {
@@ -535,21 +517,18 @@ public class PittSocial{
                 e1 = e1.getNextException();
             }
             return;
-        } 
+        }
         conn.commit();
         System.out.println("    ==End==     ");
     }
 
-    private static void searchForUser() throws
+    private static void searchForUser(String str) throws
             SQLException, ClassNotFoundException{
-                st = conn.createStatement();
-        System.out.println("Please enter the name/email of the user you are seaching for: ");
-        Scanner scan = new Scanner(System.in);
-        String str = scan.nextLine();
+        st = conn.createStatement();
         String[] splitStr = str.split("\\s+");
-                System.out.println("===Here are the users found:===");
+        System.out.println("===Here are the users found:===");
         for(int i=0; i<splitStr.length; i++){
-        String query = "SELECT name, email FROM profile where name like '%" + splitStr[i] + "%' AND email like '%" + splitStr[i] + "%'";
+            String query = "SELECT name, email FROM profile where name like '%" + splitStr[i] + "%' AND email like '%" + splitStr[i] + "%'";
             stmt = conn.prepareStatement(query);
             try{
                 ResultSet res2 = st.executeQuery(query);
@@ -559,7 +538,7 @@ public class PittSocial{
                     name = res2.getString(1);
                     email = res2.getString(2);
                     System.out.println( "Name: " + name + "Email: " + email);
-            }
+                }
             }catch (SQLException e1){
                 System.out.println("SQL Error, Please try again!");
                 while (e1 != null) {
@@ -568,16 +547,16 @@ public class PittSocial{
                     System.out.println("SQL Code = "+ e1.getErrorCode());
                     e1 = e1.getNextException();
                 }
-            return;
+                return;
             }
         }
         conn.commit();
         System.out.println("======End=======");
     }
 
-    private static void displayFriends()throws
+    private static void displayFriends(int id)throws
             SQLException, ClassNotFoundException{
-          //      Class.forName("org.postgresql.Driver");
+        //      Class.forName("org.postgresql.Driver");
         //String url = "jdbc:postgresql://localhost/postgres";
         //Properties props = new Properties();
         //props.setProperty("user", "postgres");
@@ -594,30 +573,33 @@ public class PittSocial{
             while (res.next()) {
                 id1 = res.getInt(1);
                 id2 = res.getInt(2);
-                    if(id1 == user_id){
-                           System.out.println("User ID: " + id2 );
-                    }else{
-                        System.out.println("User ID: " + id1 );
-                    }
-            }
-            while(true){
-                PreparedStatement st2 = conn.prepareStatement("SELECT name, email FROM profile where userid = ?");
-                System.out.println("Please enter the ID of the user's profile you'd like to see(enter 0 to exit): ");
-                Scanner scan = new Scanner(System.in);
-                int input = scan.nextInt();
-                if(input==0){
-                    return;
+                if(id1 == user_id){
+                    System.out.println("User ID: " + id2 );
                 }else{
-                            st2.setInt(1,input);
-                            ResultSet res2 = st2.executeQuery();
-                            while(res2.next()){
-                                name = res2.getString(1);
-                                email = res2.getString(2);
-                                System.out.println("Friend's name is " + name + " and email is " + email);
-                            }
+                    System.out.println("User ID: " + id1 );
                 }
             }
-       }catch (SQLException e1) {
+            while(true){
+                if(id == -1)
+                {
+                    System.out.println("Please enter the ID of the user's profile you'd like to see(enter 0 to exit): ");
+                    Scanner scan = new Scanner(System.in);
+                    id = scan.nextInt();
+                }
+                PreparedStatement st2 = conn.prepareStatement("SELECT name, email FROM profile where userid = " + id);
+
+                if(id==0){
+                    return;
+                }else{
+                    ResultSet res2 = st2.executeQuery();
+                    while(res2.next()){
+                        name = res2.getString(1);
+                        email = res2.getString(2);
+                        System.out.println("Friend's name is " + name + " and email is " + email);
+                    }
+                }
+            }
+        }catch (SQLException e1) {
             System.out.println("SQL Error");
             while (e1 != null) {
                 System.out.println("Message = " + e1.getMessage());
@@ -628,12 +610,12 @@ public class PittSocial{
             conn.commit();
             //conn.close();
             return;
-        } 
+        }
     }
 
     private static void threeDegrees()throws
             SQLException, ClassNotFoundException
-    {   
+    {
         int friend2;
         Scanner scan = new Scanner(System.in);
         System.out.println("Please enter the number of the User ID");
@@ -673,23 +655,23 @@ public class PittSocial{
                         path.add(friend);
                         path.add(friend2);
                     }
-                
-                if(!found)
-                {
-                    Statement stmt3 = conn.createStatement();
-                    String query2 = "SELECT * from friend where userID1 = " + String.valueOf(friend2) + ";";
-                    ResultSet rs3 = stmt3.executeQuery(query2);
-                    while(rs3.next() && !found)
+
+                    if(!found)
                     {
-                        int friend3 = rs3.getInt(2);
-                        if(friend3 == targetID)
+                        Statement stmt3 = conn.createStatement();
+                        String query2 = "SELECT * from friend where userID1 = " + String.valueOf(friend2) + ";";
+                        ResultSet rs3 = stmt3.executeQuery(query2);
+                        while(rs3.next() && !found)
                         {
-                            found = true;
-                            path.add(friend);
-                            path.add(friend2);
-                            path.add(friend3);
+                            int friend3 = rs3.getInt(2);
+                            if(friend3 == targetID)
+                            {
+                                found = true;
+                                path.add(friend);
+                                path.add(friend2);
+                                path.add(friend3);
+                            }
                         }
-                    }
                     }
                 }
             }
@@ -709,7 +691,7 @@ public class PittSocial{
     }
 
     private static void topMessages(int k, int y)throws
-            SQLException, ClassNotFoundException{   
+            SQLException, ClassNotFoundException{
         Scanner scan = new Scanner(System.in);
         String numUsers = String.valueOf(k);
         String numMonths = String.valueOf(y);
@@ -733,15 +715,13 @@ public class PittSocial{
             System.out.println(user);
         }
         ResultSet rs2 = st.executeQuery(query1);
-<<<<<<< HEAD
+
         rs2.next();
         String messages = rs2.getString(1);
         System.out.println("Number of messages in the past " + numMonths + " months: " + messages);
-=======
-        String messages = rs2.getString(3);
-        System.out.println("Number of messages in the past " + numMonths + "months: " + messages);
+
         conn.commit();
->>>>>>> 32a5265d276e1f593c00f4065b8792382cadf04c
+
 
     }
 
@@ -773,18 +753,18 @@ public class PittSocial{
         String query1 = "DELETE FROM groupMember where userID = " + String.valueOf(user_id) + ";";
         String query2 = "DELETE FROM messageInfo where fromID = " + String.valueOf(user_id) + " or toUserID = " + String.valueOf(user_id) + ";";
         try{
-         st.executeQuery(query1);
+            st.executeQuery(query1);
         }catch (SQLException e1){
-                System.out.println("SQL Error, Please try again!");
-                while (e1 != null) {
-                    System.out.println("Message = " + e1.getMessage());
-                    System.out.println("SQLState = "+ e1.getSQLState());
-                    System.out.println("SQL Code = "+ e1.getErrorCode());
-                    e1 = e1.getNextException();
-                }
-                conn.rollback();
+            System.out.println("SQL Error, Please try again!");
+            while (e1 != null) {
+                System.out.println("Message = " + e1.getMessage());
+                System.out.println("SQLState = "+ e1.getSQLState());
+                System.out.println("SQL Code = "+ e1.getErrorCode());
+                e1 = e1.getNextException();
+            }
+            conn.rollback();
             return;
-         }
+        }
         st.executeQuery(query2);
         logout();
     }
@@ -801,18 +781,18 @@ public class PittSocial{
         st = conn.createStatement();
         String query = "UPDATE profile set lastlogin = CURRENT_TIMESTAMP where userID = " + String.valueOf(user_id) + ";";
         try{
-        st.executeQuery(query);
+            st.executeQuery(query);
         }catch (SQLException e1){
-                System.out.println("SQL Error, Please try again!");
-                while (e1 != null) {
-                    System.out.println("Message = " + e1.getMessage());
-                    System.out.println("SQLState = "+ e1.getSQLState());
-                    System.out.println("SQL Code = "+ e1.getErrorCode());
-                    e1 = e1.getNextException();
-                }
-                conn.rollback();
-            return;
+            System.out.println("SQL Error, Please try again!");
+            while (e1 != null) {
+                System.out.println("Message = " + e1.getMessage());
+                System.out.println("SQLState = "+ e1.getSQLState());
+                System.out.println("SQL Code = "+ e1.getErrorCode());
+                e1 = e1.getNextException();
             }
+            conn.rollback();
+            return;
+        }
         System.exit(0);
     }
 
