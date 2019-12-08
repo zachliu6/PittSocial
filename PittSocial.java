@@ -8,7 +8,7 @@ import java.util.*;
 
 public class PittSocial{
     public static int user_id; // global variable so there's no need to search for user's ID everytime
-    public static final String password = "19990406";
+    public static final String password = "password";
     public static Connection conn;
     public static Statement st;
     public static PreparedStatement stmt;
@@ -117,7 +117,7 @@ public class PittSocial{
                         String message = scanner.nextLine();
                         initiateAddingGroup(gid, message);
                     }else if(input.equals("4")){
-                        confirmRequests();
+                        confirmRequests(-1,-1);
                     }else if(input.equals("5")){
                         System.out.println("Please enter the message you want to send: ");
                         String msg = scanner. nextLine();
@@ -304,7 +304,7 @@ public class PittSocial{
 
     public static void confirmRequests(int driver, int driverSelect) throws SQLException{
         System.out.println("==Friend Requests==");
-        stmt = conn.prepareStatement("SELECT name, message FROM (pendingfriend full outer join profile p on pendingfriend.fromid = p.userid) WHERE toid = " + user_id);
+        stmt = conn.prepareStatement("SELECT name, message, fromid FROM (pendingfriend full outer join profile p on pendingfriend.fromid = p.userid) WHERE toid = " + user_id, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
         ResultSet res;
         try{
             res = stmt.executeQuery();
@@ -324,7 +324,7 @@ public class PittSocial{
             i++;
         }
         System.out.println("==Group Requests==");
-        stmt = conn.prepareStatement("SELECT name, message FROM pendinggroupmember pg natural join (SELECT gid FROM groupmember WHERE role = 'manager' AND userid = " + user_id + ") AS pgg natural join profile");
+        stmt = conn.prepareStatement("SELECT name, message, pg.userid, gid FROM pendinggroupmember pg natural join (SELECT gid FROM groupmember WHERE role = 'manager' AND userid = " + user_id + ") AS pgg natural join profile", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
         ResultSet gres;
         try{
             gres = stmt.executeQuery();
@@ -355,12 +355,33 @@ public class PittSocial{
     		Scanner in = new Scanner(System.in);
     		req = in.nextInt();
         	while(req > 0){
-        		ls.add(req);
+        		if(!ls.contains(req)){ls.add(req);}
         		System.out.println("Enter another request to accept, enter 0 to accept all, or enter -1 to exit and reject all remaining requests");
         		req = in.nextInt();
         	}
         }
         if(req == 0){
+        	//accept all friend requests
+        	System.out.println("Accepting all requests");
+        	res.beforeFirst();
+        	while(res.next()){
+        		//System.out.println("adding friend");
+        		stmt = conn.prepareStatement("INSERT INTO friend VALUES (" + user_id + ", " + res.getInt(3) + ", NOW(), '" + res.getString(2)+ "')");
+        		stmt.execute();
+        		//System.out.println("Friend Added");
+        	}
+        	System.out.println("Deleting requests");
+        	stmt = conn.prepareStatement("DELETE FROM pendingFriend WHERE toid = " + user_id);
+        	stmt.execute();
+        	//accept all group requests
+        	gres.beforeFirst();
+        	while(res.next()){
+        		//System.out.println("adding friend");
+        		stmt = conn.prepareStatement("INSERT INTO groupMember VALUES (" + gres.getInt(4) + ", " + gres.getInt(3) + ", 'member')");
+        		stmt.execute();
+        		//System.out.println("Friend Added");
+        	}
+        }else{
         	
         }
     }
