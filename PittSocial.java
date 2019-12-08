@@ -34,9 +34,22 @@ public class PittSocial{
             Scanner scanner = new Scanner(System. in);
             String input = scanner. nextLine();
             if(input.equals("1")){
-                login();
+                System.out.println("////// Please enter your email: //////");
+                String email = scanner.nextLine();
+                System.out.println("////// Please enter your password: //////");
+                String pwd = scanner.nextLine();
+                login(email, pwd, -1);
             }else if(input.equals("2")){
-                createUser();
+                System.out.println("Enter your name");
+                String name = scanner.nextLine();
+                System.out.println("Enter your email");
+                String email = scanner.nextLine();
+                System.out.println("Enter a password");
+                String password = scanner.nextLine();
+                System.out.println("Enter your birtday in the format yyyy-MM-DD");
+                DateFormat formatter = new SimpleDateFormat("yyyy-MM-DD");
+                java.sql.Date date = java.sql.Date.valueOf(scanner.nextLine());
+                createUser(name, email, password, date, -1);
             }else if(input.equals("3")){
                 System.out.println("Have a good day, bye!");
                 System.exit(0);
@@ -46,14 +59,9 @@ public class PittSocial{
         }
     }
 
-    private static void login()throws
+    private static void login(String email, String pwd, int driver)throws
             SQLException, ClassNotFoundException{
         while(true){
-            System.out.println("////// Please enter your email: //////");
-            Scanner scanner = new Scanner(System. in);
-            String email = scanner.nextLine();
-            System.out.println("////// Please enter your password: //////");
-            String pwd = scanner.nextLine();
             Class.forName("org.postgresql.Driver");
             String url = "jdbc:postgresql://localhost/postgres";
             Properties props = new Properties();
@@ -64,7 +72,7 @@ public class PittSocial{
             st = conn.createStatement();
             String query = "SELECT password, userID FROM profile where email = '" + email + "' AND password = '" + pwd + "'";
             ResultSet res = st.executeQuery(query);
-            if(res.next()){
+            if(res.next() && driver == -1){
                 user_id = res.getInt(2);
                 while(1 == 1){
                     System.out.println(" WELCOME !");
@@ -145,7 +153,10 @@ public class PittSocial{
                         System.exit(0);
                     }
                 }
-            }else{
+            }else if(res.next() && driver == 1){
+                user_id = res.getInt(2);
+            }
+            else{
                 System.out.println("Password not matched, sorry");
                 System.out.println("Do you want to log out? (Y/N)");
                 String response = scanner.nextLine();
@@ -156,7 +167,7 @@ public class PittSocial{
         }
     }
 
-    private static void createUser() throws SQLException, ClassNotFoundException{
+    private static void createUser(String name, String email, String password, java.sql.Date date, int driver) throws SQLException, ClassNotFoundException{
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
@@ -164,18 +175,7 @@ public class PittSocial{
         props.setProperty("password", password);
         conn = DriverManager.getConnection(url, props);
         conn.setAutoCommit(false);
-        stmt = conn.prepareStatement("INSERT INTO profile(userID, name, email, password, date_of_birth) VALUES (DEFAULT,?,?,?,?)");
-        System.out.println("Enter your name");
-        Scanner scanner = new Scanner(System.in);
-        stmt.setString(1, scanner.nextLine());
-        System.out.println("Enter your email");
-        stmt.setString(2, scanner.nextLine());
-        System.out.println("Enter a password");
-        stmt.setString(3, scanner.nextLine());
-        System.out.println("Enter your birtday in the format yyyy-MM-DD");
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-DD");
-        java.sql.Date date = java.sql.Date.valueOf(scanner.nextLine());
-        stmt.setDate(4, date);
+        stmt = conn.prepareStatement("INSERT INTO profile(userID, name, email, password, date_of_birth) VALUES (DEFAULT," + name + "," + email + "," + password + "," + date + ")");
         try{
             stmt.execute();
         }catch (SQLException e1) {
@@ -191,7 +191,7 @@ public class PittSocial{
         }
         conn.commit();
         System.out.println("Account Created");
-        login();
+        login(email, password, driver);
     }
 
     private static void initiateFriendship(int friendID, String message) throws ClassNotFoundException, SQLException{
