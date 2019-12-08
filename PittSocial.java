@@ -62,6 +62,7 @@ public class PittSocial{
     private static void login(String email, String pwd, int driver)throws
             SQLException, ClassNotFoundException{
         while(true){
+            Scanner scanner = new Scanner(System. in);
             Class.forName("org.postgresql.Driver");
             String url = "jdbc:postgresql://localhost/postgres";
             Properties props = new Properties();
@@ -92,7 +93,7 @@ public class PittSocial{
                     System.out.println("12. List the messages in the past months. ");
                     System.out.println("13. Log out. ");
                     System.out.println("========================================================================");
-                    scanner = new Scanner(System. in);
+
                     String input = scanner.nextLine();
                     if(input.equals("1")){
                         System.out.println("Enter the ID of the user you would like to send a request to");
@@ -164,6 +165,7 @@ public class PittSocial{
                     System.exit(0);
                 }
             }
+            scanner.close();
         }
     }
 
