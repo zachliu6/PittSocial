@@ -116,7 +116,11 @@ public class PittSocial{
                     String id = scanner. nextLine();
                     sendMessageToUser(msg, id);
                 }else if(input.equals("6")){
-                    sendMessageToGroup();
+                    System.out.println("Please enter the message you want to send: ");
+                    String msg = scanner.nextLine();
+                    System.out.println("Please enter the ID of the group you are sending message to: ");
+                    String id = scanner.nextLine();
+                    sendMessageToGroup(msg, id);
                 }else if(input.equals("7")){
                     displayMessages();
                 }else if(input.equals("8")){
@@ -394,7 +398,7 @@ public class PittSocial{
         System.out.println("Message Sent!");
     }
 
-    private static void sendMessageToGroup()throws 
+    private static void sendMessageToGroup(String msg, int id)throws
             SQLException, ClassNotFoundException{
         //Class.forName("org.postgresql.Driver");
         //String url = "jdbc:postgresql://localhost/postgres";
@@ -405,13 +409,7 @@ public class PittSocial{
         Scanner scanner = new Scanner(System.in);
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         Date date = new Date();
-        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFALUT," + user_id +",?,NULL,?,"+ formatter.format(date)+ ")");
-        System.out.println("Please enter the message you want to send: ");
-        String msg = scanner. nextLine();
-        stmt.setString(1,msg);    
-        System.out.println("Please enter the ID of the group you are sending message to: ");
-        String id = scanner. nextLine();
-        stmt.setString(2,id);
+        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFALUT," + user_id +"," + msg + ",NULL," + id + ","+ formatter.format(date)+ ")");
         int found = 0;
         String query = "select userid from groupmember where gid = " + id;
         Statement st2 = conn.createStatement();
