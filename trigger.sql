@@ -49,3 +49,9 @@ CREATE TRIGGER addMessageRecipient
     AFTER INSERT ON messageInfo
     FOR EACH ROW
     EXECUTE PROCEDURE sendMessage();
+
+CREATE OR REPLACE FUNCTION threeDegrees(IN target int, OUT hop1 int, OUT hop2 int, OUT hop3 int,) AS $$
+    BEGIN
+        
+    END;
+    $$ language plpgsql
