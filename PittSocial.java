@@ -110,7 +110,11 @@ public class PittSocial{
                 }else if(input.equals("4")){
                 	confirmRequests();
                 }else if(input.equals("5")){
-                    sendMessageToUser();
+                    System.out.println("Please enter the message you want to send: ");
+                    String msg = scanner. nextLine();
+                    System.out.println("Please enter the iD of the user you are sending message to: ");
+                    String id = scanner. nextLine();
+                    sendMessageToUser(msg, id);
                 }else if(input.equals("6")){
                     sendMessageToGroup();
                 }else if(input.equals("7")){
@@ -331,7 +335,7 @@ public class PittSocial{
         conn.commit();
     }
     
-    private static void sendMessageToUser()throws
+    private static void sendMessageToUser(String msg, int id)throws
             SQLException, ClassNotFoundException{
         //Class.forName("org.postgresql.Driver");
         //String url = "jdbc:postgresql://localhost/postgres";
@@ -341,13 +345,7 @@ public class PittSocial{
         //Connection conn = DriverManager.getConnection(url, props);
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFALUT, " + user_id +", ?,?,NULL," + formatter.format(date)+ ")");
-        Scanner scanner = new Scanner(System. in);
-        System.out.println("Please enter the message you want to send: ");
-        String msg = scanner. nextLine();        
-        stmt.setString(1, msg);
-        System.out.println("Please enter the iD of the user you are sending message to: ");
-        String id = scanner. nextLine();        
+        stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFALUT, " + user_id +", " + msg + ", " + id + ",NULL," + formatter.format(date)+ ")");
         int found = 0;
         String query = "select * from friend f where f.userid1 = " + user_id;
         Statement st2 = conn.createStatement();
@@ -376,7 +374,6 @@ public class PittSocial{
         st2 = conn.createStatement();
         res = st2.executeQuery(query);
         System.out.println("The user's name you want to send a message to is " + res.getString(1));
-        stmt.setString(2, id);
         try{
             stmt.execute();
         }catch (SQLException e1) {
