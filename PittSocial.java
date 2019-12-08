@@ -113,13 +113,13 @@ public class PittSocial{
                         System.out.println("Please enter the message you want to send: ");
                         String msg = scanner. nextLine();
                         System.out.println("Please enter the iD of the user you are sending message to: ");
-                        String id = scanner. nextLine();
+                        int id = scanner. nextInt();
                         sendMessageToUser(msg, id);
                     }else if(input.equals("6")){
                         System.out.println("Please enter the message you want to send: ");
                         String msg = scanner.nextLine();
                         System.out.println("Please enter the ID of the group you are sending message to: ");
-                        String id = scanner.nextLine();
+                        int id = scanner.nextInt();
                         sendMessageToGroup(msg, id);
                     }else if(input.equals("7")){
                         displayMessages();
@@ -129,7 +129,7 @@ public class PittSocial{
                         displayFriends(-1);
                     }else if(input.equals("10")){
                         System.out.println("Please enter the name/email of the user you are seaching for: ");
-                        String str = scan.nextLine();
+                        String str = scanner.nextLine();
                         searchForUser(str);
                     }else if(input.equals("11")){
                         threeDegrees();
@@ -357,7 +357,7 @@ public class PittSocial{
         Statement st2 = conn.createStatement();
         ResultSet res = st2.executeQuery(query);
         while(res.next()){
-            if(res.getString(1) == id){
+            if(res.getInt(1) == id){
                 found = 1;
             }
         }
@@ -367,7 +367,7 @@ public class PittSocial{
             res = st2.executeQuery(query);
         }
         while(res.next()){
-            if(res.getString(1) == id){
+            if(res.getInt(1) == id){
                 found = 1;
             }
         }
@@ -392,10 +392,9 @@ public class PittSocial{
             }
             //conn.close();
             conn.rollback();
-            scanner.close();
+
             return;
         }
-        scanner.close();
         conn.commit();
         System.out.println("Message Sent!");
     }
@@ -408,7 +407,7 @@ public class PittSocial{
         //props.setProperty("user", "postgres");
         //props.setProperty("password", password);
         //Connection conn = DriverManager.getConnection(url, props);
-        Scanner scanner = new Scanner(System.in);
+
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         Date date = new Date();
         stmt = conn.prepareStatement("INSERT INTO messageInfo values (DEFALUT," + user_id +"," + msg + ",NULL," + id + ","+ formatter.format(date)+ ")");
@@ -438,10 +437,10 @@ public class PittSocial{
             }
             conn.rollback();
             //conn.close();
-            scanner.close();
+           
             return;
         }
-        scanner. close();
+
         conn.commit();
         System.out.println("Message sent!");
     }
