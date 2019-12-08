@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;  
 import java.util.*;
 public class Driver{
-    public static final String password = "19990406";
+    public static final String password = "postgres";
     public static Connection conn;
     public static Statement st;
     public static ResultSet rs;
@@ -18,20 +18,21 @@ public class Driver{
         PittSocial test = new PittSocial();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
    		LocalDateTime now = LocalDateTime.now();  
-    	try {
-            Class.forName("org.postgresql.Driver");
-            String url = "jdbc:postgresql://localhost/postgres";
-            Properties props = new Properties();
-            props.setProperty("user", "postgres");
-            props.setProperty("password", password);
-            conn = DriverManager.getConnection(url, props);
-            st = conn.createStatement();
-            DateFormat formatter = new SimpleDateFormat("yyyy-MM-DD");
-            java.sql.Date date = java.sql.Date.valueOf("1998-03-12");
-            query = "Select * from profile";
-            System.out.println("=================This is the driver program=================");
-            System.out.println("///////Here is the test for function 'createUser'");
-            test.createUser("Connor", "connor@pitt.edu", "cpwd", date, 1);
+
+   		Class.forName("org.postgresql.Driver");
+   		String url = "jdbc:postgresql://localhost/postgres";
+   		Properties props = new Properties();
+   		props.setProperty("user", "postgres");
+   		props.setProperty("password", password);
+   		conn = DriverManager.getConnection(url, props);
+   		st = conn.createStatement();
+   		DateFormat formatter = new SimpleDateFormat("yyyy-MM-DD");
+   		java.sql.Date date = java.sql.Date.valueOf("1998-03-12");
+   		query = "Select * from profile";
+   		System.out.println("=================This is the driver program=================");
+   		System.out.println("///////Here is the test for function 'createUser'");
+   		test.createUser("Connor", "connor@pitt.edu", "cpwd", date, 1);
+   		try{
             rs = st.executeQuery(query);
             while (rs.next()) {
                 System.out.println(rs.getString(1) + "," + rs.getString(2) + "," + rs.getString(3) + "," + rs.getDate(4) + "," + rs.getDate(5));
@@ -41,15 +42,18 @@ public class Driver{
 			System.out.println(e);
 		}
 
+   		/*
 	    query="Select * from friend";
         System.out.println("///////Here is the test for function 'initiateFriendship'");
-        test.initiateFriendship(1, "Hi, It's me Connor");
+        test.initiateFriendship(1, "Hi It's me Connor");
         rs = st.executeQuery(query);
         while(rs.next()){
         	System.out.println(rs.getInt(1)+","+rs.getInt(2)+","+rs.getString(3));
         }
 
-		query="Select * from goupInfo";
+   		 */
+
+		query="Select * from groupInfo";
 		System.out.println("///////Here is the test for function 'createGroup'");
 		test.createGroup("Friends", "My friends", 10);
         rs = st.executeQuery(query);
@@ -65,13 +69,16 @@ public class Driver{
         	System.out.println(rs.getInt(1)+","+rs.getString(2)+","+rs.getString(3));
         }	
 
+        /*
         query="Select * from pendingFriend";
 		System.out.println("///////Here is the test for function 'confirmRequest'");
 		//test.confirmRequest("1", "Hi friends");
         rs = st.executeQuery(query);
         while(rs.next()){
         	System.out.println(rs.getInt(1)+","+rs.getInt(2)+","+rs.getString(3));
-        }	
+        }
+
+        */
 
       	query="Select * from MessageInfo";
 		System.out.println("///////Here is the test for function 'sendMessageToUser'");
