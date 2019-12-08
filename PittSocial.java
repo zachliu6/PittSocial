@@ -343,13 +343,25 @@ public class PittSocial{
             i++;
         }
         conn.commit();
-        int req;
+        int req = -2;
+    	Queue<Integer> ls = new LinkedList<Integer>();
         if(driver == 1){
         	req = driverSelect;
+        	if(req > 0){
+        		ls.add(req);
+        	}
         }else{
-        	System.out.println("Enter the number of the request to accept (Enter 0 to accept all)");
-        	Scanner in = new Scanner(System.in);
-        	req = in.nextInt();
+    		System.out.println("Enter the number of the request to accept, enter 0 to accept all, or enter -1 to exit and reject all remaining requests");
+    		Scanner in = new Scanner(System.in);
+    		req = in.nextInt();
+        	while(req > 0){
+        		ls.add(req);
+        		System.out.println("Enter another request to accept, enter 0 to accept all, or enter -1 to exit and reject all remaining requests");
+        		req = in.nextInt();
+        	}
+        }
+        if(req == 0){
+        	
         }
     }
 
