@@ -117,7 +117,7 @@ public class PittSocial{
                         String message = scanner.nextLine();
                         initiateAddingGroup(gid, message);
                     }else if(input.equals("4")){
-                        confirmRequests();
+                       // confirmRequests();
                     }else if(input.equals("5")){
                         System.out.println("Please enter the message you want to send: ");
                         String msg = scanner. nextLine();
