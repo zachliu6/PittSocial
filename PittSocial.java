@@ -300,7 +300,7 @@ public class PittSocial{
         }
     }
 
-    private static void confirmRequests() throws SQLException{
+    private static void confirmRequests(int driver, int driverSelect) throws SQLException{
         System.out.println("==Friend Requests==");
         stmt = conn.prepareStatement("SELECT name, message FROM (pendingfriend full outer join profile p on pendingfriend.fromid = p.userid) WHERE toid = " + user_id);
         ResultSet res;
@@ -341,6 +341,14 @@ public class PittSocial{
             i++;
         }
         conn.commit();
+        int req;
+        if(driver == 1){
+        	req = driverSelect;
+        }else{
+        	System.out.println("Enter the number of the request to accept (Enter 0 to accept all)");
+        	Scanner in = new Scanner(System.in);
+        	req = in.nextInt();
+        }
     }
 
     private static void sendMessageToUser(String msg, int id)throws
