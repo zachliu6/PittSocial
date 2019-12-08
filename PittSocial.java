@@ -23,7 +23,7 @@ public class PittSocial{
         home();
     }
 
-    private static void home() throws ClassNotFoundException, SQLException{
+    public static void home() throws ClassNotFoundException, SQLException{
         while(true){
             System.out.println("=========================WELCOME TO PITT SOCIAL=========================");
             System.out.println("Here's is the menu, please enter the number of the service you are looking for:");
@@ -59,7 +59,7 @@ public class PittSocial{
         }
     }
 
-    private static void login(String email, String pwd, int driver)throws
+    public static void login(String email, String pwd, int driver)throws
             SQLException, ClassNotFoundException{
         while(true){
             Scanner scanner = new Scanner(System. in);
@@ -169,7 +169,7 @@ public class PittSocial{
         }
     }
 
-    private static void createUser(String name, String email, String password, java.sql.Date date, int driver) throws SQLException, ClassNotFoundException{
+    public static void createUser(String name, String email, String password, java.sql.Date date, int driver) throws SQLException, ClassNotFoundException{
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
@@ -196,7 +196,7 @@ public class PittSocial{
         login(email, password, driver);
     }
 
-    private static void initiateFriendship(int friendID, String message) throws ClassNotFoundException, SQLException{
+    public static void initiateFriendship(int friendID, String message) throws ClassNotFoundException, SQLException{
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
@@ -225,7 +225,7 @@ public class PittSocial{
         }
     }
 
-    private static void createGroup(String name, String description, int maxSize) throws ClassNotFoundException, SQLException{
+    public static void createGroup(String name, String description, int maxSize) throws ClassNotFoundException, SQLException{
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
         Properties props = new Properties();
@@ -271,7 +271,7 @@ public class PittSocial{
         System.out.println("Group created");
     }
 
-    private static void initiateAddingGroup(int gid, String message) throws SQLException{
+    public static void initiateAddingGroup(int gid, String message) throws SQLException{
         stmt = conn.prepareStatement("SELECT name FROM groupInfo WHERE gid = " + gid);
         ResultSet rs;
         try{
@@ -302,7 +302,7 @@ public class PittSocial{
         }
     }
 
-    private static void confirmRequests(int driver, int driverSelect) throws SQLException{
+    public static void confirmRequests(int driver, int driverSelect) throws SQLException{
         System.out.println("==Friend Requests==");
         stmt = conn.prepareStatement("SELECT name, message FROM (pendingfriend full outer join profile p on pendingfriend.fromid = p.userid) WHERE toid = " + user_id);
         ResultSet res;
@@ -365,7 +365,7 @@ public class PittSocial{
         }
     }
 
-    private static void sendMessageToUser(String msg, int id)throws
+    public static void sendMessageToUser(String msg, int id)throws
             SQLException, ClassNotFoundException{
         //Class.forName("org.postgresql.Driver");
         //String url = "jdbc:postgresql://localhost/postgres";
@@ -423,7 +423,7 @@ public class PittSocial{
         System.out.println("Message Sent!");
     }
 
-    private static void sendMessageToGroup(String msg, int id)throws
+    public static void sendMessageToGroup(String msg, int id)throws
             SQLException, ClassNotFoundException{
         //Class.forName("org.postgresql.Driver");
         //String url = "jdbc:postgresql://localhost/postgres";
@@ -469,7 +469,7 @@ public class PittSocial{
         System.out.println("Message sent!");
     }
 
-    private static void displayMessages()throws
+    public static void displayMessages()throws
             SQLException, ClassNotFoundException{
         Class.forName("org.postgresql.Driver");
         //String url = "jdbc:postgresql://localhost/postgres";
@@ -504,7 +504,7 @@ public class PittSocial{
         conn.commit();
     }
 
-    private static void displayNewMessages()throws
+    public static void displayNewMessages()throws
             SQLException, ClassNotFoundException{
         //Class.forName("org.postgresql.Driver");
         //String url = "jdbc:postgresql://localhost/postgres";
@@ -545,7 +545,7 @@ public class PittSocial{
         System.out.println("    ==End==     ");
     }
 
-    private static void searchForUser(String str) throws
+    public static void searchForUser(String str) throws
             SQLException, ClassNotFoundException{
         st = conn.createStatement();
         String[] splitStr = str.split("\\s+");
@@ -577,7 +577,7 @@ public class PittSocial{
         System.out.println("======End=======");
     }
 
-    private static void displayFriends(int id)throws
+    public static void displayFriends(int id)throws
             SQLException, ClassNotFoundException{
         //      Class.forName("org.postgresql.Driver");
         //String url = "jdbc:postgresql://localhost/postgres";
@@ -636,7 +636,7 @@ public class PittSocial{
         }
     }
 
-    private static void threeDegrees()throws
+    public static void threeDegrees()throws
             SQLException, ClassNotFoundException
     {
         int friend2;
@@ -713,7 +713,7 @@ public class PittSocial{
 
     }
 
-    private static void topMessages(int k, int y)throws
+    public static void topMessages(int k, int y)throws
             SQLException, ClassNotFoundException{
         Scanner scan = new Scanner(System.in);
         String numUsers = String.valueOf(k);
@@ -748,7 +748,7 @@ public class PittSocial{
 
     }
 
-    private static void logout() throws ClassNotFoundException, SQLException
+    public static void logout() throws ClassNotFoundException, SQLException
     {
         //Class.forName("org.postgresql.Driver");
         //String url = "jdbc:postgresql://localhost/postgres";
@@ -762,7 +762,7 @@ public class PittSocial{
         conn.commit();
     }
 
-    private static void dropUser()throws
+    public static void dropUser()throws
             SQLException, ClassNotFoundException{
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
@@ -792,7 +792,7 @@ public class PittSocial{
         logout();
     }
 
-    private static void exit() throws ClassNotFoundException, SQLException
+    public static void exit() throws ClassNotFoundException, SQLException
     {
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost/postgres";
