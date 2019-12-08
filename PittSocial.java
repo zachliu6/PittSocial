@@ -216,8 +216,10 @@ public class PittSocial{
                 conn.rollback();
                 return;
             }
-        }else{
+            System.out.println("Friend request sent!");
             conn.commit();
+        }else{
+            conn.rollback();
             System.out.println("User does not exist");
             conn.close();
         }
