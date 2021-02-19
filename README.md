@@ -1,2 +1,2 @@
-# CS1555-Group-Project
-Fall 2019, CS1555
+# PittSocial  
+Fall 2019, JDBC application
